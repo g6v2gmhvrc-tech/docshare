@@ -292,10 +292,10 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
       <div class="error-msg show" id="up-file-err" style="display:none"></div>
     </div>
     <div class="form-group">
-      <label class="form-label">展示图片 *（至少3张）</label>
+      <label class="form-label">展示图片（可选）</label>
       <input type="file" id="img-input" style="display:none" accept="image/*" multiple onchange="handleImgSelect(this)">
       <div class="image-preview-grid" id="img-preview-grid"></div>
-      <p class="img-req-note">已添加 <strong id="img-count" style="color:var(--danger)">0</strong> 张 · 至少需要3张</p>
+      <p class="img-req-note">已添加 <strong id="img-count" style="color:var(--danger)">0</strong> 张 · 可添加多张</p>
       <div class="error-msg" id="up-img-err"></div>
     </div>
     <div class="form-group">
@@ -584,7 +584,7 @@ function doUpload() {
   clearFieldError('up-img-err');
   clearFieldError('up-title-err');
   if (!selectedDocFile) { showFieldError('up-file-err', '请选择要上传的文件'); ok = false; }
-  if (uploadImgFiles.length < 3) { showFieldError('up-img-err', '请至少上传3张展示图片'); ok = false; }
+  
   if (!title) { showFieldError('up-title-err', '请填写标题'); ok = false; }
   if (!ok) return;
 

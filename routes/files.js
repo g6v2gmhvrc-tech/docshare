@@ -86,8 +86,7 @@ router.post('/', requireAuth, upload.fields([
     const { title, description, category, tags } = req.body;
     if (!title) return res.status(400).json({ error: '请填写标题' });
     if (!req.files || !req.files.file) return res.status(400).json({ error: '请上传文件' });
-    if (!req.files.images || req.files.images.length < 3)
-      return res.status(400).json({ error: '请至少上传3张展示图片' });
+
 
     const docFile = req.files.file[0];
     const imgPaths = req.files.images.map(f => '/uploads/' + f.filename);
