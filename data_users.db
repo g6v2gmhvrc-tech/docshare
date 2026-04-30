@@ -1,0 +1,5 @@
+{"username":"LeafTheCreator","email":"leafshubs@gmail.com","password":"$2a$10$WFfHROHtX9qKk.axUXEz6uIOGSMp53ZwCvx8ikSk6NZ0xRvs6mzYe","avatar":"/uploads/avatar_1777522105186.png","created_at":"2026-04-30T04:08:25.364Z","_id":"W41iWm88IeeY4gl0"}
+{"$$indexCreated":{"fieldName":"email","unique":true,"sparse":false}}
+{"$$indexCreated":{"fieldName":"username","unique":true,"sparse":false}}
+{"$$indexCreated":{"fieldName":"email","unique":true}}
+{"$$indexCreated":{"fieldName":"username","unique":true}}
