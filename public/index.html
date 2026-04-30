@@ -161,7 +161,11 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
 .toast.error { background: var(--danger); }
 
 /* EMPTY */
-.empty-state { text-align: center; padding: 60px 20px; color: var(--text2); grid-column: 1/-1; }
+.search-bar { display: flex; gap: 8px; margin-bottom: 20px; }
+.search-input { flex: 1; padding: 10px 16px; border: 1.5px solid var(--border); border-radius: 24px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--surface); outline: none; transition: border-color 0.15s; }
+.search-input:focus { border-color: var(--accent); }
+.search-btn { padding: 10px 20px; border-radius: 24px; background: var(--accent); color: white; border: none; cursor: pointer; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+.search-btn:hover { background: var(--accent2); }
 .empty-state .e-icon { font-size: 48px; margin-bottom: 12px; }
 .empty-state h3 { font-size: 18px; font-weight: 500; margin-bottom: 6px; color: var(--text); }
 
@@ -205,6 +209,10 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
     <div id="upload-btn-wrap" style="display:none;">
       <button class="btn btn-primary" onclick="openModal('upload-modal')">＋ 上传文件</button>
     </div>
+  </div>
+  <div class="search-bar">
+    <input class="search-input" id="search-input" placeholder="🔍 搜索标题、描述、标签…" oninput="handleSearchInput()" onkeydown="if(event.key==='Enter')doSearch()">
+    <button class="search-btn" onclick="doSearch()">搜索</button>
   </div>
   <div class="filter-bar">
     <div class="filter-chip active" onclick="filterFiles('all',this)">全部</div>
@@ -652,6 +660,18 @@ function resetUploadForm() {
 }
 
 // ── LOAD FILES ──
+var searchTimer = null;
+function handleSearchInput() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(doSearch, 400);
+}
+function doSearch() {
+  var q = document.getElementById('search-input').value.trim();
+  var url = '/api/files?category=' + (currentFilter !== 'all' ? currentFilter : '');
+  if (q) url += (url.includes('?') ? '&' : '?') + 'search=' + encodeURIComponent(q);
+  fetch(url).then(function(r) { return r.json(); }).then(function(files) { renderGrid(files); });
+}
+
 var currentFilter = 'all';
 function loadFiles(filter) {
   if (filter) currentFilter = filter;
