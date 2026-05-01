@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DocShare — 文件分享平台</title>
+<title>ShareDo — 文件分享平台</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -16,35 +16,29 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-/* NAV */
 nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
 .logo { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--accent); cursor: pointer; }
 .logo span { color: var(--gold); }
 .nav-right { display: flex; align-items: center; gap: 12px; }
-
-/* BUTTONS */
 .btn { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; padding: 9px 20px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.18s; }
 .btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
 .btn-ghost:hover { background: var(--surface2); color: var(--text); }
 .btn-primary { background: var(--accent); color: white; }
 .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
-.btn-sm { padding: 7px 14px; font-size: 13px; }
 .btn-danger { background: var(--danger); color: white; }
-
-/* OVERLAY / MODAL */
+.btn-danger:hover { background: #a93226; }
+.btn-sm { padding: 7px 14px; font-size: 13px; }
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 500; display: none; align-items: center; justify-content: center; padding: 16px; }
 .overlay.active { display: flex; }
 .modal { background: var(--surface); border-radius: 16px; padding: 40px; width: 100%; max-width: 440px; box-shadow: 0 20px 80px rgba(0,0,0,0.18); animation: slideUp 0.22s ease; position: relative; max-height: 90vh; overflow-y: auto; }
 .modal-wide { max-width: 600px; }
 .modal-xl { max-width: 740px; }
+.modal-profile { max-width: 520px; }
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 .modal-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 600; margin-bottom: 6px; }
 .modal-sub { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
 .close-btn { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; background: var(--surface2); border: none; cursor: pointer; font-size: 16px; color: var(--text2); display: flex; align-items: center; justify-content: center; }
 .close-btn:hover { background: var(--border); }
-
-/* FORMS */
 .form-group { margin-bottom: 16px; }
 .form-label { font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 6px; display: block; }
 .form-input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--bg); transition: border-color 0.15s; outline: none; }
@@ -52,16 +46,10 @@ nav { background: var(--surface); border-bottom: 1px solid var(--border); paddin
 select.form-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
 .form-switch { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text2); margin-top: 16px; }
 .form-switch a { color: var(--accent); font-weight: 500; cursor: pointer; text-decoration: none; }
-.form-switch a:hover { text-decoration: underline; }
 .error-msg { font-size: 12px; color: var(--danger); margin-top: 4px; display: none; }
-.error-msg.show { display: block; }
-
-/* AVATAR */
 .avatar-upload-row { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
 .avatar-preview { width: 60px; height: 60px; border-radius: 50%; background: var(--accent-light); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 600; color: var(--accent); overflow: hidden; flex-shrink: 0; border: 2px solid var(--border); }
 .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
-
-/* HERO */
 .hero { background: linear-gradient(135deg, var(--accent) 0%, #1A3D28 100%); padding: 80px 40px; text-align: center; color: white; }
 .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 500; margin-bottom: 20px; }
 .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(36px, 5vw, 58px); font-weight: 700; line-height: 1.1; margin-bottom: 16px; }
@@ -71,18 +59,17 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
 .btn-white { background: white; color: var(--accent); font-weight: 600; padding: 12px 28px; font-size: 15px; }
 .btn-white:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
 .btn-outline-white { background: transparent; color: white; border: 1.5px solid rgba(255,255,255,0.5); font-size: 15px; padding: 12px 28px; }
-.btn-outline-white:hover { background: rgba(255,255,255,0.1); }
-
-/* MAIN */
 .main-container { max-width: 1280px; margin: 0 auto; padding: 48px 40px; }
 .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
 .section-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 600; }
+.search-bar { display: flex; gap: 8px; margin-bottom: 20px; }
+.search-input { flex: 1; padding: 10px 16px; border: 1.5px solid var(--border); border-radius: 24px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--surface); outline: none; transition: border-color 0.15s; }
+.search-input:focus { border-color: var(--accent); }
+.search-btn { padding: 10px 20px; border-radius: 24px; background: var(--accent); color: white; border: none; cursor: pointer; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; }
 .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
 .filter-chip { padding: 7px 16px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--surface); font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; transition: all 0.15s; }
 .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
 .filter-chip.active { background: var(--accent); color: white; border-color: var(--accent); }
-
-/* FILE GRID */
 .file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
 .file-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; transition: all 0.22s; cursor: pointer; }
 .file-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-3px); border-color: transparent; }
@@ -97,15 +84,14 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
 .card-desc { font-size: 12px; color: var(--text2); margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .card-meta { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border); }
 .card-author { display: flex; align-items: center; gap: 8px; }
-.author-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-light); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--accent); overflow: hidden; flex-shrink: 0; }
+.author-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-light); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--accent); overflow: hidden; flex-shrink: 0; cursor: pointer; transition: opacity 0.15s; }
+.author-avatar:hover { opacity: 0.8; }
 .author-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .author-name { font-size: 12px; font-weight: 500; }
 .author-date { font-size: 11px; color: var(--text3); }
 .card-price { font-size: 12px; font-weight: 600; background: var(--accent-light); color: var(--accent); padding: 3px 10px; border-radius: 12px; }
 .card-stats { display: flex; gap: 10px; margin-bottom: 10px; }
 .stat-pill { font-size: 11px; color: var(--text3); }
-
-/* UPLOAD */
 .drop-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 36px 20px; text-align: center; cursor: pointer; transition: all 0.18s; background: var(--bg); }
 .drop-zone:hover, .drop-zone.drag-over { border-color: var(--accent); background: var(--accent-light); }
 .drop-icon { font-size: 36px; margin-bottom: 10px; }
@@ -113,8 +99,6 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
 .drop-sub { font-size: 12px; color: var(--text3); }
 .file-chosen { display: flex; align-items: center; gap: 10px; background: var(--accent-light); border-radius: var(--radius-sm); padding: 10px 14px; margin-top: 10px; }
 .file-chosen-name { font-size: 13px; font-weight: 500; color: var(--accent); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-/* IMAGE GRID */
 .image-preview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
 .img-prev-wrap { position: relative; aspect-ratio: 4/3; border-radius: 8px; overflow: hidden; background: var(--surface2); }
 .img-prev-wrap img { width: 100%; height: 100%; object-fit: cover; }
@@ -122,57 +106,65 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
 .img-placeholder { aspect-ratio: 4/3; border: 2px dashed var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--text3); cursor: pointer; transition: all 0.15s; background: var(--bg); }
 .img-placeholder:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
 .img-req-note { font-size: 12px; color: var(--text2); margin-top: 8px; }
-
-/* TAGS */
 .tag-input-wrap { display: flex; flex-wrap: wrap; gap: 6px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px; background: var(--bg); min-height: 44px; cursor: text; }
 .tag-item { background: var(--accent-light); color: var(--accent); padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
 .tag-item button { background: none; border: none; cursor: pointer; color: var(--accent); font-size: 13px; padding: 0; }
 .tag-bare-input { border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 14px; background: transparent; color: var(--text); min-width: 80px; flex: 1; padding: 2px 4px; }
-
-/* PROGRESS */
 .progress-bar-wrap { background: var(--surface2); border-radius: 4px; height: 6px; margin-top: 12px; overflow: hidden; display: none; }
 .progress-bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; border-radius: 4px; }
-
-/* DETAIL */
 .detail-main-img { width: 100%; border-radius: var(--radius); aspect-ratio: 16/9; object-fit: cover; background: var(--surface2); display: block; }
 .detail-thumbs { display: flex; gap: 8px; margin-top: 8px; margin-bottom: 20px; flex-wrap: wrap; }
 .detail-thumb { width: 72px; height: 52px; border-radius: 6px; object-fit: cover; border: 2px solid transparent; cursor: pointer; transition: all 0.15s; }
 .detail-thumb.active { border-color: var(--accent); }
-.detail-author-row { display: flex; align-items: center; gap: 12px; padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 20px; }
-.detail-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--accent-light); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; color: var(--accent); overflow: hidden; flex-shrink: 0; border: 2px solid var(--border); }
+.detail-author-row { display: flex; align-items: center; gap: 12px; padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 20px; cursor: pointer; }
+.detail-author-row:hover .detail-avatar { opacity: 0.85; }
+.detail-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--accent-light); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; color: var(--accent); overflow: hidden; flex-shrink: 0; border: 2px solid var(--border); transition: opacity 0.15s; }
 .detail-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .detail-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 600; margin-bottom: 8px; }
 .detail-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
 .tag-display { background: var(--surface2); border: 1px solid var(--border); color: var(--text2); padding: 3px 10px; border-radius: 12px; font-size: 12px; }
 .detail-desc { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 20px; }
 .detail-download-row { display: flex; gap: 10px; align-items: center; }
-
-/* USER CHIP */
 .user-chip { display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 5px; border-radius: 24px; border: 1px solid var(--border); cursor: pointer; background: var(--surface); transition: all 0.15s; }
 .user-chip:hover { background: var(--surface2); }
 .chip-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--accent-light); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--accent); overflow: hidden; }
 .chip-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .chip-name { font-size: 13px; font-weight: 500; }
-
+/* PROFILE PAGE */
+.profile-header { text-align: center; padding: 24px 0 20px; }
+.profile-big-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--accent-light); display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 700; color: var(--accent); overflow: hidden; margin: 0 auto 12px; border: 3px solid var(--border); }
+.profile-big-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.profile-name { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+.profile-joined { font-size: 13px; color: var(--text3); margin-bottom: 16px; }
+.profile-files-title { font-size: 14px; font-weight: 600; color: var(--text2); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.profile-file-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.profile-file-thumb { width: 48px; height: 36px; border-radius: 6px; object-fit: cover; background: var(--surface2); flex-shrink: 0; }
+.profile-file-info { flex: 1; min-width: 0; }
+.profile-file-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; color: var(--text); }
+.profile-file-name:hover { color: var(--accent); }
+.profile-file-date { font-size: 11px; color: var(--text3); }
+.profile-file-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.profile-file-actions button { padding: 4px 10px; font-size: 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.profile-file-actions .edit-btn:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+.profile-file-actions .del-btn:hover { background: #fdecea; border-color: var(--danger); color: var(--danger); }
+/* EDIT FILE MODAL */
+.edit-modal { max-width: 560px; }
 /* TOAST */
 .toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: white; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; z-index: 1000; transform: translateY(80px); transition: transform 0.25s; max-width: 320px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
 .toast.show { transform: translateY(0); }
 .toast.success { background: var(--accent); }
 .toast.error { background: var(--danger); }
-
-/* EMPTY */
-.search-bar { display: flex; gap: 8px; margin-bottom: 20px; }
-.search-input { flex: 1; padding: 10px 16px; border: 1.5px solid var(--border); border-radius: 24px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--surface); outline: none; transition: border-color 0.15s; }
-.search-input:focus { border-color: var(--accent); }
-.search-btn { padding: 10px 20px; border-radius: 24px; background: var(--accent); color: white; border: none; cursor: pointer; font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
-.search-btn:hover { background: var(--accent2); }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text2); grid-column: 1/-1; }
 .empty-state .e-icon { font-size: 48px; margin-bottom: 12px; }
 .empty-state h3 { font-size: 18px; font-weight: 500; margin-bottom: 6px; color: var(--text); }
-
-/* LOADING SPINNER */
-.spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+.lang-btn { padding: 10px 14px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--surface); font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; transition: all 0.15s; text-align: center; }
+.lang-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.lang-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+/* DARK MODE */
+body.dark { --bg: #111827; --surface: #1F2937; --surface2: #374151; --text: #F9FAFB; --text2: #9CA3AF; --text3: #6B7280; --border: #374151; --accent-light: #064E3B; }
+body.dark .search-input { color: var(--text); }
+body.dark .form-input { color: var(--text); }
 @keyframes spin { to { transform: rotate(360deg); } }
-
 @media (max-width: 600px) {
   nav { padding: 0 16px; }
   .main-container { padding: 24px 16px; }
@@ -184,7 +176,7 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
 <body>
 
 <nav>
-  <div class="logo" onclick="window.location.href='/'">Doc<span>Share</span></div>
+  <div class="logo" onclick="window.location.href='/'"<>Share<span>Do</span></div>
   <div class="nav-right" id="nav-right">
     <button class="btn btn-ghost" onclick="openModal('login-modal')">登录</button>
     <button class="btn btn-primary" onclick="openModal('register-modal')">免费注册</button>
@@ -194,7 +186,7 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
 <div id="hero-section">
   <div class="hero">
     <div class="hero-tag">✦ 文件分享社区</div>
-    <h1>分享你的<br><em>知识资源</em></h1>
+    <h1><em>ShareDo</em></h1>
     <p>上传 PDF、文档、课件，与所有人共享你的创作</p>
     <div class="hero-btns">
       <button class="btn btn-white" onclick="openModal('register-modal')">立即注册 →</button>
@@ -233,7 +225,7 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
   <div class="modal">
     <button class="close-btn" onclick="closeModal('register-modal')">✕</button>
     <h2 class="modal-title">创建账号</h2>
-    <p class="modal-sub">加入 DocShare，开始分享资源</p>
+    <p class="modal-sub">加入 ShareDo，开始分享资源</p>
     <div class="avatar-upload-row">
       <div class="avatar-preview" id="reg-avatar-preview">?</div>
       <div>
@@ -267,7 +259,7 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
   <div class="modal">
     <button class="close-btn" onclick="closeModal('login-modal')">✕</button>
     <h2 class="modal-title">欢迎回来</h2>
-    <p class="modal-sub">登录你的 DocShare 账号</p>
+    <p class="modal-sub">登录你的 FriendShare 账号</p>
     <div class="form-group">
       <label class="form-label">邮箱</label>
       <input class="form-input" id="login-email" type="email" placeholder="your@email.com">
@@ -297,13 +289,13 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
       </div>
       <input type="file" id="file-input" style="display:none" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip,.rar" onchange="handleFileSelect(this)">
       <div id="file-chosen-display"></div>
-      <div class="error-msg show" id="up-file-err" style="display:none"></div>
+      <div class="error-msg" id="up-file-err"></div>
     </div>
     <div class="form-group">
       <label class="form-label">展示图片（可选）</label>
       <input type="file" id="img-input" style="display:none" accept="image/*" multiple onchange="handleImgSelect(this)">
       <div class="image-preview-grid" id="img-preview-grid"></div>
-      <p class="img-req-note">已添加 <strong id="img-count" style="color:var(--danger)">0</strong> 张 · 可添加多张</p>
+      <p class="img-req-note">已添加 <strong id="img-count">0</strong> 张</p>
       <div class="error-msg" id="up-img-err"></div>
     </div>
     <div class="form-group">
@@ -345,60 +337,135 @@ select.form-input { appearance: none; background-image: url("data:image/svg+xml,
   </div>
 </div>
 
+<!-- PROFILE -->
+<div class="overlay" id="profile-modal">
+  <div class="modal modal-profile">
+    <button class="close-btn" onclick="closeModal('profile-modal')">✕</button>
+    <div id="profile-content"></div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="overlay" id="settings-modal">
+  <div class="modal" style="max-width:460px;">
+    <button class="close-btn" onclick="closeModal('settings-modal')">✕</button>
+    <h2 class="modal-title">⚙️ 设置</h2>
+    <p class="modal-sub">个性化你的 ShareDo 体验</p>
+
+    <div style="margin-bottom:24px;">
+      <div class="form-label" style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px;">🌐 语言 / Language</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="lang-options">
+        <div class="lang-btn active" onclick="setLang('zh')" data-lang="zh">🇨🇳 中文</div>
+        <div class="lang-btn" onclick="setLang('en')" data-lang="en">🇺🇸 English</div>
+        <div class="lang-btn" onclick="setLang('ja')" data-lang="ja">🇯🇵 日本語</div>
+        <div class="lang-btn" onclick="setLang('ko')" data-lang="ko">🇰🇷 한국어</div>
+        <div class="lang-btn" onclick="setLang('fr')" data-lang="fr">🇫🇷 Français</div>
+        <div class="lang-btn" onclick="setLang('es')" data-lang="es">🇪🇸 Español</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:24px;">
+      <div class="form-label" style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px;">🎨 主题 / Theme</div>
+      <div style="display:flex;gap:8px;">
+        <div class="lang-btn active" onclick="setTheme('light')" id="theme-light">☀️ 浅色</div>
+        <div class="lang-btn" onclick="setTheme('dark')" id="theme-dark">🌙 深色</div>
+      </div>
+    </div>
+
+    <div style="padding-top:16px;border-top:1px solid var(--border);">
+      <div class="form-label" style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;">📦 关于</div>
+      <p style="font-size:13px;color:var(--text2);">ShareDo v1.0 · 文件分享平台</p>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT FILE -->
+<div class="overlay" id="edit-modal">
+  <div class="modal edit-modal">
+    <button class="close-btn" onclick="closeModal('edit-modal')">✕</button>
+    <h2 class="modal-title">编辑文件</h2>
+    <p class="modal-sub">修改文件信息</p>
+    <input type="hidden" id="edit-file-id">
+    <div class="form-group">
+      <label class="form-label">标题 *</label>
+      <input class="form-input" id="edit-title" placeholder="文件标题">
+      <div class="error-msg" id="edit-title-err"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">简介</label>
+      <textarea class="form-input" id="edit-desc" rows="3" style="resize:vertical"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">分类</label>
+      <select class="form-input" id="edit-cat">
+        <option value="pdf">PDF</option>
+        <option value="doc">文档</option>
+        <option value="ppt">演示文稿</option>
+        <option value="other">其他</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">标签（回车添加）</label>
+      <div class="tag-input-wrap" id="edit-tag-wrap" onclick="document.getElementById('edit-tag-bare').focus()">
+        <input class="tag-bare-input" id="edit-tag-bare" placeholder="输入标签后按回车…" onkeydown="handleEditTagKey(event)">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">更换展示图片（可选，不选则保留原图）</label>
+      <input type="file" id="edit-img-input" style="display:none" accept="image/*" multiple onchange="handleEditImgSelect(this)">
+      <div class="image-preview-grid" id="edit-img-grid"></div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="document.getElementById('edit-img-input').click()">＋ 添加图片</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <button class="btn btn-primary" id="edit-save-btn" style="flex:1;padding:12px;" onclick="doEditSave()">保存修改</button>
+    </div>
+  </div>
+</div>
+
 <script>
 var currentUser = null;
 var uploadTags = [];
 var uploadImgFiles = [];
 var selectedDocFile = null;
+var editTags = [];
+var editImgFiles = [];
 
 // ── INIT ──
 (function init() {
+  applyTheme(currentTheme);
   fetch('/auth/me').then(function(r) { return r.json(); }).then(function(data) {
     if (data.user) setLoggedIn(data.user);
     loadFiles();
+    applyLang(currentLang);
   });
   renderImgGrid();
 })();
 
-// ── AUTH STATE ──
 function setLoggedIn(user) {
   currentUser = user;
   var initials = user.username ? user.username.slice(0,1).toUpperCase() : '?';
-  var avatarHTML = user.avatar
-    ? '<img src="' + user.avatar + '">'
-    : initials;
+  var avatarHTML = user.avatar ? '<img src="' + user.avatar + '">' : initials;
   document.getElementById('nav-right').innerHTML =
     '<button class="btn btn-primary btn-sm" onclick="openModal(\'upload-modal\')">＋ 上传</button>' +
-    '<div class="user-chip" onclick="handleLogout()">' +
+    '<div class="user-chip" onclick="openProfile(\'' + user.id + '\')">' +
       '<div class="chip-avatar">' + avatarHTML + '</div>' +
       '<span class="chip-name">' + user.username + '</span>' +
-      '<span style="font-size:11px;color:var(--text3);margin-left:2px;" title="点击登出">↩</span>' +
-    '</div>';
+    '</div>' +
+    '<button class="btn btn-ghost btn-sm" onclick="openModal(\'settings-modal\')" title="设置">⚙️</button>' +
+    '<button class="btn btn-ghost btn-sm" onclick="handleLogout()">退出</button>';
   document.getElementById('hero-section').style.display = 'none';
   document.getElementById('upload-btn-wrap').style.display = 'block';
 }
 
 function handleLogout() {
   if (!confirm('确定要退出登录吗？')) return;
-  fetch('/auth/logout', { method: 'POST' }).then(function() {
-    currentUser = null;
-    location.reload();
-  });
+  fetch('/auth/logout', { method: 'POST' }).then(function() { currentUser = null; location.reload(); });
 }
 
 // ── MODALS ──
-function openModal(id) {
-  document.getElementById(id).classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-function closeModal(id) {
-  document.getElementById(id).classList.remove('active');
-  document.body.style.overflow = '';
-}
-function switchModal(from, to) {
-  closeModal(from);
-  setTimeout(function() { openModal(to); }, 150);
-}
+function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow = 'hidden'; }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow = ''; }
+function switchModal(from, to) { closeModal(from); setTimeout(function() { openModal(to); }, 150); }
 document.querySelectorAll('.overlay').forEach(function(o) {
   o.addEventListener('click', function(e) { if (e.target === o) closeModal(o.id); });
 });
@@ -411,15 +478,10 @@ function showToast(msg, type) {
   setTimeout(function() { toastEl.className = 'toast'; }, 3500);
 }
 
-// ── AVATAR PREVIEW ──
 function previewAvatar(input, targetId) {
-  var file = input.files[0];
-  if (!file) return;
+  var file = input.files[0]; if (!file) return;
   var reader = new FileReader();
-  reader.onload = function(e) {
-    var el = document.getElementById(targetId);
-    el.innerHTML = '<img src="' + e.target.result + '">';
-  };
+  reader.onload = function(e) { document.getElementById(targetId).innerHTML = '<img src="' + e.target.result + '">'; };
   reader.readAsDataURL(file);
 }
 
@@ -429,36 +491,23 @@ function doRegister() {
   var email = document.getElementById('reg-email').value.trim();
   var pass = document.getElementById('reg-pass').value;
   var avatarFile = document.getElementById('reg-avatar-input').files[0];
+  clearFieldError('reg-username-err'); clearFieldError('reg-email-err'); clearFieldError('reg-pass-err');
   var ok = true;
-  clearFieldError('reg-username-err');
-  clearFieldError('reg-email-err');
-  clearFieldError('reg-pass-err');
   if (!username) { showFieldError('reg-username-err', '请输入用户名'); ok = false; }
   if (!email || !email.includes('@')) { showFieldError('reg-email-err', '请输入有效邮箱'); ok = false; }
   if (pass.length < 6) { showFieldError('reg-pass-err', '密码至少6位'); ok = false; }
   if (!ok) return;
   var btn = document.getElementById('reg-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>注册中…';
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>注册中…';
   var fd = new FormData();
-  fd.append('username', username);
-  fd.append('email', email);
-  fd.append('password', pass);
+  fd.append('username', username); fd.append('email', email); fd.append('password', pass);
   if (avatarFile) fd.append('avatar', avatarFile);
-  fetch('/auth/register', { method: 'POST', body: fd })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      btn.disabled = false; btn.textContent = '注册';
-      if (data.error) { showFieldError('reg-email-err', data.error); return; }
-      setLoggedIn(data.user);
-      closeModal('register-modal');
-      showToast('注册成功，欢迎加入 DocShare！', 'success');
-      loadFiles();
-    })
-    .catch(function() {
-      btn.disabled = false; btn.textContent = '注册';
-      showToast('网络错误，请重试', 'error');
-    });
+  fetch('/auth/register', { method: 'POST', body: fd }).then(function(r) { return r.json(); }).then(function(data) {
+    btn.disabled = false; btn.textContent = '注册';
+    if (data.error) { showFieldError('reg-email-err', data.error); return; }
+    setLoggedIn(data.user); closeModal('register-modal');
+    showToast('注册成功，欢迎加入 ShareDo！', 'success'); loadFiles();
+  }).catch(function() { btn.disabled = false; btn.textContent = '注册'; showToast('网络错误', 'error'); });
 }
 
 // ── LOGIN ──
@@ -468,134 +517,83 @@ function doLogin() {
   clearFieldError('login-err');
   if (!email || !pass) { showFieldError('login-err', '请填写邮箱和密码'); return; }
   var btn = document.getElementById('login-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>登录中…';
-  fetch('/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email, password: pass })
-  })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>登录中…';
+  fetch('/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: pass }) })
+    .then(function(r) { return r.json(); }).then(function(data) {
       btn.disabled = false; btn.textContent = '登录';
       if (data.error) { showFieldError('login-err', data.error); return; }
-      setLoggedIn(data.user);
-      closeModal('login-modal');
-      showToast('登录成功，欢迎回来 ' + data.user.username + '！', 'success');
-      loadFiles();
-    })
-    .catch(function() {
-      btn.disabled = false; btn.textContent = '登录';
-      showToast('网络错误，请重试', 'error');
-    });
+      setLoggedIn(data.user); closeModal('login-modal');
+      showToast('欢迎回来 ' + data.user.username + '！', 'success'); loadFiles();
+    }).catch(function() { btn.disabled = false; btn.textContent = '登录'; showToast('网络错误', 'error'); });
 }
 
-function showFieldError(id, msg) {
-  var el = document.getElementById(id);
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-function clearFieldError(id) {
-  var el = document.getElementById(id);
-  el.textContent = '';
-  el.style.display = 'none';
-}
+function showFieldError(id, msg) { var el = document.getElementById(id); el.textContent = msg; el.style.display = 'block'; }
+function clearFieldError(id) { var el = document.getElementById(id); el.textContent = ''; el.style.display = 'none'; }
 
 // ── FILE UPLOAD ──
 function handleFileDrop(e) {
-  e.preventDefault();
-  document.getElementById('file-drop').classList.remove('drag-over');
+  e.preventDefault(); document.getElementById('file-drop').classList.remove('drag-over');
   if (e.dataTransfer.files[0]) setDocFile(e.dataTransfer.files[0]);
 }
-function handleFileSelect(input) {
-  if (input.files[0]) setDocFile(input.files[0]);
-}
+function handleFileSelect(input) { if (input.files[0]) setDocFile(input.files[0]); }
 function setDocFile(file) {
   selectedDocFile = file;
   var ext = file.name.split('.').pop().toUpperCase();
   document.getElementById('file-chosen-display').innerHTML =
-    '<div class="file-chosen"><span style="font-size:20px;">📄</span>' +
-    '<span class="file-chosen-name">' + file.name + '</span>' +
+    '<div class="file-chosen"><span style="font-size:20px;">📄</span><span class="file-chosen-name">' + file.name + '</span>' +
     '<span style="font-size:11px;background:var(--accent-light);color:var(--accent);padding:2px 8px;border-radius:8px;font-weight:600;">' + ext + '</span></div>';
 }
-
-// ── IMAGE GRID ──
 function renderImgGrid() {
-  var grid = document.getElementById('img-preview-grid');
-  if (!grid) return;
+  var grid = document.getElementById('img-preview-grid'); if (!grid) return;
   var html = '';
   uploadImgFiles.forEach(function(imgObj, idx) {
-    html += '<div class="img-prev-wrap"><img src="' + imgObj.preview + '">' +
-            '<button class="img-remove" onclick="removeImg(' + idx + ')">✕</button></div>';
+    html += '<div class="img-prev-wrap"><img src="' + imgObj.preview + '"><button class="img-remove" onclick="removeImg(' + idx + ')">✕</button></div>';
   });
   var remaining = Math.max(1, 4 - uploadImgFiles.length);
   for (var i = 0; i < remaining && uploadImgFiles.length + i < 8; i++) {
     html += '<div class="img-placeholder" onclick="document.getElementById(\'img-input\').click()">＋</div>';
   }
   grid.innerHTML = html;
-  var countEl = document.getElementById('img-count');
-  if (countEl) {
-    countEl.textContent = uploadImgFiles.length;
-    countEl.style.color = uploadImgFiles.length >= 3 ? 'var(--accent)' : 'var(--danger)';
-  }
+  var countEl = document.getElementById('img-count'); if (countEl) countEl.textContent = uploadImgFiles.length;
 }
 function handleImgSelect(input) {
   Array.from(input.files).forEach(function(file) {
     if (uploadImgFiles.length >= 8) return;
     var reader = new FileReader();
-    reader.onload = function(e) {
-      uploadImgFiles.push({ file: file, preview: e.target.result });
-      renderImgGrid();
-    };
+    reader.onload = function(e) { uploadImgFiles.push({ file: file, preview: e.target.result }); renderImgGrid(); };
     reader.readAsDataURL(file);
   });
   input.value = '';
 }
-function removeImg(idx) {
-  uploadImgFiles.splice(idx, 1);
-  renderImgGrid();
-}
+function removeImg(idx) { uploadImgFiles.splice(idx, 1); renderImgGrid(); }
 
 // ── TAGS ──
 function handleTagKey(e) {
   if (e.key === 'Enter') {
     e.preventDefault();
     var val = e.target.value.trim();
-    if (val && !uploadTags.includes(val) && uploadTags.length < 8) {
-      uploadTags.push(val);
-      renderUploadTags();
-    }
+    if (val && !uploadTags.includes(val) && uploadTags.length < 8) { uploadTags.push(val); renderUploadTags(); }
     e.target.value = '';
   }
 }
-function removeUploadTag(idx) {
-  uploadTags.splice(idx, 1);
-  renderUploadTags();
-}
+function removeUploadTag(idx) { uploadTags.splice(idx, 1); renderUploadTags(); }
 function renderUploadTags() {
   var wrap = document.getElementById('tag-wrap');
   var html = uploadTags.map(function(tagText, idx) {
-    return '<span class="tag-item">' + tagText +
-           '<button onclick="removeUploadTag(' + idx + ')">×</button></span>';
+    return '<span class="tag-item">' + tagText + '<button onclick="removeUploadTag(' + idx + ')">×</button></span>';
   }).join('');
-  html += '<input class="tag-bare-input" id="tag-bare" placeholder="' +
-          (uploadTags.length ? '' : '输入标签后按回车…') +
-          '" onkeydown="handleTagKey(event)">';
+  html += '<input class="tag-bare-input" id="tag-bare" placeholder="' + (uploadTags.length ? '' : '输入标签后按回车…') + '" onkeydown="handleTagKey(event)">';
   wrap.innerHTML = html;
 }
 
 // ── DO UPLOAD ──
 function doUpload() {
   var title = document.getElementById('up-title').value.trim();
+  clearFieldError('up-file-err'); clearFieldError('up-title-err');
   var ok = true;
-  clearFieldError('up-file-err');
-  clearFieldError('up-img-err');
-  clearFieldError('up-title-err');
   if (!selectedDocFile) { showFieldError('up-file-err', '请选择要上传的文件'); ok = false; }
-  
   if (!title) { showFieldError('up-title-err', '请填写标题'); ok = false; }
   if (!ok) return;
-
   var fd = new FormData();
   fd.append('file', selectedDocFile);
   uploadImgFiles.forEach(function(imgObj) { fd.append('images', imgObj.file); });
@@ -603,75 +601,46 @@ function doUpload() {
   fd.append('description', document.getElementById('up-desc').value.trim());
   fd.append('category', document.getElementById('up-cat').value);
   fd.append('tags', uploadTags.join(','));
-
   var btn = document.getElementById('up-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>上传中…';
-
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>上传中…';
   var progressWrap = document.getElementById('up-progress-wrap');
   var progressFill = document.getElementById('up-progress-fill');
   progressWrap.style.display = 'block';
-
   var xhr = new XMLHttpRequest();
-  xhr.upload.onprogress = function(e) {
-    if (e.lengthComputable) {
-      progressFill.style.width = Math.round(e.loaded / e.total * 100) + '%';
-    }
-  };
+  xhr.upload.onprogress = function(e) { if (e.lengthComputable) progressFill.style.width = Math.round(e.loaded / e.total * 100) + '%'; };
   xhr.onload = function() {
-    btn.disabled = false;
-    btn.textContent = '发布文件';
-    progressWrap.style.display = 'none';
-    progressFill.style.width = '0%';
+    btn.disabled = false; btn.textContent = '发布文件';
+    progressWrap.style.display = 'none'; progressFill.style.width = '0%';
     if (xhr.status === 200) {
-      closeModal('upload-modal');
-      showToast('文件上传成功！', 'success');
-      resetUploadForm();
-      loadFiles();
+      closeModal('upload-modal'); showToast('文件上传成功！', 'success'); resetUploadForm(); loadFiles();
     } else {
-      try {
-        var data = JSON.parse(xhr.responseText);
-        showToast(data.error || '上传失败', 'error');
-      } catch(ex) {
-        showToast('上传失败，请重试', 'error');
-      }
+      try { showToast(JSON.parse(xhr.responseText).error || '上传失败', 'error'); } catch(ex) { showToast('上传失败', 'error'); }
     }
   };
-  xhr.onerror = function() {
-    btn.disabled = false;
-    btn.textContent = '发布文件';
-    progressWrap.style.display = 'none';
-    showToast('网络错误，请重试', 'error');
-  };
+  xhr.onerror = function() { btn.disabled = false; btn.textContent = '发布文件'; progressWrap.style.display = 'none'; showToast('网络错误', 'error'); };
   xhr.open('POST', '/api/files');
   xhr.send(fd);
 }
-
 function resetUploadForm() {
-  selectedDocFile = null;
-  uploadImgFiles = [];
-  uploadTags = [];
+  selectedDocFile = null; uploadImgFiles = []; uploadTags = [];
   document.getElementById('file-chosen-display').innerHTML = '';
   document.getElementById('up-title').value = '';
   document.getElementById('up-desc').value = '';
   document.getElementById('file-input').value = '';
-  renderImgGrid();
-  renderUploadTags();
+  renderImgGrid(); renderUploadTags();
 }
 
-// ── LOAD FILES ──
+// ── SEARCH ──
 var searchTimer = null;
-function handleSearchInput() {
-  clearTimeout(searchTimer);
-  searchTimer = setTimeout(doSearch, 400);
-}
+function handleSearchInput() { clearTimeout(searchTimer); searchTimer = setTimeout(doSearch, 400); }
 function doSearch() {
   var q = document.getElementById('search-input').value.trim();
-  var url = '/api/files?category=' + (currentFilter !== 'all' ? currentFilter : '');
+  var url = '/api/files' + (currentFilter !== 'all' ? '?category=' + currentFilter : '');
   if (q) url += (url.includes('?') ? '&' : '?') + 'search=' + encodeURIComponent(q);
   fetch(url).then(function(r) { return r.json(); }).then(function(files) { renderGrid(files); });
 }
 
+// ── LOAD FILES ──
 var currentFilter = 'all';
 function loadFiles(filter) {
   if (filter) currentFilter = filter;
@@ -679,49 +648,35 @@ function loadFiles(filter) {
   fetch(url).then(function(r) { return r.json(); }).then(function(files) {
     renderGrid(files);
   }).catch(function() {
-    document.getElementById('file-grid').innerHTML =
-      '<div class="empty-state"><div class="e-icon">⚠️</div><h3>加载失败</h3><p>请刷新页面重试</p></div>';
+    document.getElementById('file-grid').innerHTML = '<div class="empty-state"><div class="e-icon">⚠️</div><h3>加载失败</h3><p>请刷新页面重试</p></div>';
   });
 }
-
 function filterFiles(cat, el) {
   document.querySelectorAll('.filter-chip').forEach(function(c) { c.classList.remove('active'); });
-  el.classList.add('active');
-  loadFiles(cat);
+  el.classList.add('active'); loadFiles(cat);
 }
 
-// ── RENDER GRID ──
+// ── RENDER ──
 var typeLabels = { pdf: 'PDF', doc: 'DOC', ppt: 'PPT', other: 'FILE' };
-
-function renderGrid(files) {
-  var grid = document.getElementById('file-grid');
-  if (!files.length) {
-    grid.innerHTML = '<div class="empty-state"><div class="e-icon">📭</div><h3>暂无文件</h3><p>成为第一个上传资源的人吧</p></div>';
-    return;
-  }
-  grid.innerHTML = files.map(function(f) { return cardHTML(f); }).join('');
-}
-
 var OFFICIAL_USERS = ['LeafTheCreator'];
-
 function officialBadge(username) {
   if (OFFICIAL_USERS.indexOf(username) === -1) return '';
-  return '<span title="官方账号" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;background:var(--gold);border-radius:50%;font-size:9px;color:white;font-weight:700;margin-left:4px;flex-shrink:0;" >✓</span>';
+  return '<span title="官方账号" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;background:var(--gold);border-radius:50%;font-size:9px;color:white;font-weight:700;margin-left:4px;flex-shrink:0;">✓</span>';
 }
-
+function renderGrid(files) {
+  var grid = document.getElementById('file-grid');
+  if (!files.length) { grid.innerHTML = '<div class="empty-state"><div class="e-icon">📭</div><h3>暂无文件</h3><p>成为第一个上传资源的人吧</p></div>'; return; }
+  grid.innerHTML = files.map(function(f) { return cardHTML(f); }).join('');
+}
 function cardHTML(f) {
   var imgs = f.images || [];
   var mainImg = imgs[0] || '';
-  var thumbs = imgs.slice(1, 3).map(function(src) {
-    return '<img class="thumb-mini" src="' + src + '">';
-  }).join('');
+  var thumbs = imgs.slice(1, 3).map(function(src) { return '<img class="thumb-mini" src="' + src + '">'; }).join('');
   var initials = f.username ? f.username.slice(0,1).toUpperCase() : '?';
-  var avatarHTML = f.user_avatar
-    ? '<img src="' + f.user_avatar + '">'
-    : initials;
+  var avatarHTML = f.user_avatar ? '<img src="' + f.user_avatar + '">' : initials;
   var date = f.created_at ? f.created_at.slice(0, 10) : '';
   var tagList = (f.tags || []).slice(0, 2).join(' · ');
-
+  var uid = f.user_id || '';
   return '<div class="file-card" data-id="' + f.id + '" onclick="openDetail(this.dataset.id)">' +
     '<div class="card-gallery">' +
       (mainImg ? '<img class="card-gallery-main" src="' + mainImg + '" onerror="this.style.background=\'var(--surface2)\'">' : '<div class="card-gallery-main"></div>') +
@@ -730,12 +685,11 @@ function cardHTML(f) {
       (imgs.length > 1 ? '<span class="card-gallery-count">' + imgs.length + ' 张</span>' : '') +
     '</div>' +
     '<div class="card-body">' +
-      '<div class="card-stats"><span class="stat-pill">⬇ ' + (f.downloads || 0) + '</span>' +
-      (tagList ? '<span class="stat-pill">🏷 ' + tagList + '</span>' : '') + '</div>' +
+      '<div class="card-stats"><span class="stat-pill">⬇ ' + (f.downloads || 0) + '</span>' + (tagList ? '<span class="stat-pill">🏷 ' + tagList + '</span>' : '') + '</div>' +
       '<h3 class="card-title">' + escHtml(f.title) + '</h3>' +
       (f.description ? '<p class="card-desc">' + escHtml(f.description) + '</p>' : '') +
       '<div class="card-meta">' +
-        '<div class="card-author">' +
+        '<div class="card-author" onclick="event.stopPropagation();openProfile(\'' + uid + '\')">' +
           '<div class="author-avatar">' + avatarHTML + '</div>' +
           '<div><div class="author-name" style="display:flex;align-items:center;">' + escHtml(f.username) + officialBadge(f.username) + '</div><div class="author-date">' + date + '</div></div>' +
         '</div>' +
@@ -753,52 +707,209 @@ function openDetail(id) {
     var avatarHTML = f.user_avatar ? '<img src="' + f.user_avatar + '">' : initials;
     var date = f.created_at ? f.created_at.slice(0, 10) : '';
     var thumbsHTML = imgs.map(function(src, i) {
-      return '<img class="detail-thumb' + (i === 0 ? ' active' : '') + '" src="' + src + '" data-src="' + src + '" onclick="switchDetailImg(this, this.dataset.src)">';
+      return '<img class="detail-thumb' + (i === 0 ? ' active' : '') + '" src="' + src + '" data-src="' + src + '" onclick="switchDetailImg(this,this.dataset.src)">';
     }).join('');
-    var tagsHTML = (f.tags || []).map(function(tagLabel) {
-      return '<span class="tag-display">' + escHtml(tagLabel) + '</span>';
-    }).join('');
-
+    var tagsHTML = (f.tags || []).map(function(tagLabel) { return '<span class="tag-display">' + escHtml(tagLabel) + '</span>'; }).join('');
+    var uid = f.user_id || '';
+    var isOwner = currentUser && (currentUser.id === f.user_id || currentUser.id === f._id);
+    var ownerBtns = isOwner ?
+      '<button class="btn btn-ghost btn-sm" onclick="openEditModal(\'' + (f._id || f.id) + '\')">✏️ 编辑</button>' +
+      '<button class="btn btn-danger btn-sm" onclick="doDeleteFile(\'' + (f._id || f.id) + '\')">🗑 删除</button>' : '';
     document.getElementById('detail-content').innerHTML =
-      '<img class="detail-main-img" id="detail-main-img" src="' + mainImg + '">' +
-      '<div class="detail-thumbs">' + thumbsHTML + '</div>' +
-      '<div class="detail-author-row">' +
+      (mainImg ? '<img class="detail-main-img" id="detail-main-img" src="' + mainImg + '">' : '') +
+      (thumbsHTML ? '<div class="detail-thumbs">' + thumbsHTML + '</div>' : '') +
+      '<div class="detail-author-row" onclick="openProfile(\'' + uid + '\')">' +
         '<div class="detail-avatar">' + avatarHTML + '</div>' +
         '<div><div style="font-size:15px;font-weight:600;display:flex;align-items:center;">' + escHtml(f.username) + officialBadge(f.username) + '</div>' +
-        '<div style="font-size:13px;color:var(--text2);">上传于 ' + date + ' · ' + (f.downloads || 0) + ' 次下载</div></div>' +
+        '<div style="font-size:13px;color:var(--text2);">上传于 ' + date + ' · ' + (f.downloads || 0) + ' 次下载 · 点击查看主页</div></div>' +
       '</div>' +
       '<h2 class="detail-title">' + escHtml(f.title) + '</h2>' +
       (tagsHTML ? '<div class="detail-tags">' + tagsHTML + '</div>' : '') +
       (f.description ? '<p class="detail-desc">' + escHtml(f.description) + '</p>' : '') +
       '<div class="detail-download-row">' +
-        '<button class="btn btn-primary" style="flex:1;padding:12px;font-size:15px;" data-id="' + (f._id || f.id) + '" data-name="' + escHtml(f.original_name || f.title) + '" onclick="handleDownload(this.dataset.id, this.dataset.name)">⬇ 免费下载</button>' +
+        '<button class="btn btn-primary" style="flex:1;padding:12px;font-size:15px;" data-id="' + (f._id || f.id) + '" data-name="' + escHtml(f.original_name || f.title) + '" onclick="handleDownload(this.dataset.id,this.dataset.name)">⬇ 免费下载</button>' +
+        ownerBtns +
       '</div>';
-
     openModal('detail-modal');
   });
 }
-
 function switchDetailImg(el, src) {
   document.getElementById('detail-main-img').src = src;
   document.querySelectorAll('.detail-thumb').forEach(function(thumb) { thumb.classList.remove('active'); });
   el.classList.add('active');
 }
-
 function handleDownload(id, name) {
-  if (!currentUser) {
-    closeModal('detail-modal');
-    setTimeout(function() { openModal('register-modal'); }, 200);
-    showToast('请先注册或登录后下载文件');
-    return;
-  }
+  if (!currentUser) { closeModal('detail-modal'); setTimeout(function() { openModal('register-modal'); }, 200); showToast('请先登录后下载'); return; }
   var link = document.createElement('a');
-  link.href = '/api/files/' + id + '/download';
-  link.download = name;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  link.href = '/api/files/' + id + '/download'; link.download = name;
+  document.body.appendChild(link); link.click(); document.body.removeChild(link);
   showToast('开始下载…', 'success');
 }
+
+// ── DELETE FILE ──
+function doDeleteFile(id) {
+  if (!confirm('确定要删除这个文件吗？此操作不可撤销。')) return;
+  fetch('/api/files/' + id, { method: 'DELETE' }).then(function(r) { return r.json(); }).then(function(data) {
+    if (data.error) { showToast(data.error, 'error'); return; }
+    closeModal('detail-modal');
+    showToast('文件已删除', 'success');
+    loadFiles();
+  }).catch(function() { showToast('删除失败', 'error'); });
+}
+
+// ── EDIT FILE ──
+function openEditModal(id) {
+  fetch('/api/files/' + id).then(function(r) { return r.json(); }).then(function(f) {
+    document.getElementById('edit-file-id').value = f._id || f.id;
+    document.getElementById('edit-title').value = f.title || '';
+    document.getElementById('edit-desc').value = f.description || '';
+    document.getElementById('edit-cat').value = f.category || 'other';
+    editTags = Array.isArray(f.tags) ? f.tags.slice() : [];
+    editImgFiles = [];
+    renderEditTags();
+    renderEditImgGrid(f.images || []);
+    closeModal('detail-modal');
+    openModal('edit-modal');
+  });
+}
+function handleEditTagKey(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    var val = e.target.value.trim();
+    if (val && !editTags.includes(val) && editTags.length < 8) { editTags.push(val); renderEditTags(); }
+    e.target.value = '';
+  }
+}
+function removeEditTag(idx) { editTags.splice(idx, 1); renderEditTags(); }
+function renderEditTags() {
+  var wrap = document.getElementById('edit-tag-wrap');
+  var html = editTags.map(function(tagText, idx) {
+    return '<span class="tag-item">' + tagText + '<button onclick="removeEditTag(' + idx + ')">×</button></span>';
+  }).join('');
+  html += '<input class="tag-bare-input" id="edit-tag-bare" placeholder="' + (editTags.length ? '' : '输入标签后按回车…') + '" onkeydown="handleEditTagKey(event)">';
+  wrap.innerHTML = html;
+}
+function renderEditImgGrid(existingImgs) {
+  var grid = document.getElementById('edit-img-grid');
+  var html = '';
+  existingImgs.forEach(function(src, i) {
+    html += '<div class="img-prev-wrap"><img src="' + src + '"></div>';
+  });
+  editImgFiles.forEach(function(imgObj, idx) {
+    html += '<div class="img-prev-wrap"><img src="' + imgObj.preview + '"><button class="img-remove" onclick="removeEditImg(' + idx + ')">✕</button></div>';
+  });
+  grid.innerHTML = html;
+}
+function handleEditImgSelect(input) {
+  Array.from(input.files).forEach(function(file) {
+    var reader = new FileReader();
+    reader.onload = function(e) { editImgFiles.push({ file: file, preview: e.target.result }); renderEditImgGrid([]); };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+function removeEditImg(idx) { editImgFiles.splice(idx, 1); renderEditImgGrid([]); }
+function doEditSave() {
+  var id = document.getElementById('edit-file-id').value;
+  var title = document.getElementById('edit-title').value.trim();
+  if (!title) { showFieldError('edit-title-err', '请填写标题'); return; }
+  clearFieldError('edit-title-err');
+  var btn = document.getElementById('edit-save-btn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>保存中…';
+  var fd = new FormData();
+  fd.append('title', title);
+  fd.append('description', document.getElementById('edit-desc').value.trim());
+  fd.append('category', document.getElementById('edit-cat').value);
+  fd.append('tags', editTags.join(','));
+  editImgFiles.forEach(function(imgObj) { fd.append('images', imgObj.file); });
+  fetch('/api/files/' + id, { method: 'PUT', body: fd }).then(function(r) { return r.json(); }).then(function(data) {
+    btn.disabled = false; btn.textContent = '保存修改';
+    if (data.error) { showToast(data.error, 'error'); return; }
+    closeModal('edit-modal'); showToast('修改已保存！', 'success'); loadFiles();
+  }).catch(function() { btn.disabled = false; btn.textContent = '保存修改'; showToast('保存失败', 'error'); });
+}
+
+// ── PROFILE ──
+function openProfile(userId) {
+  if (!userId) return;
+  fetch('/api/users/' + userId).then(function(r) { return r.json(); }).then(function(data) {
+    if (data.error) { showToast('加载失败', 'error'); return; }
+    var user = data.user;
+    var userFiles = data.files || [];
+    var initials = user.username ? user.username.slice(0,1).toUpperCase() : '?';
+    var avatarHTML = user.avatar ? '<img src="' + user.avatar + '">' : initials;
+    var joined = user.created_at ? user.created_at.slice(0,10) : '';
+    var isMe = currentUser && currentUser.id === userId;
+    var filesHTML = '';
+    if (!userFiles.length) {
+      filesHTML = '<p style="font-size:14px;color:var(--text3);text-align:center;padding:20px 0;">暂无上传文件</p>';
+    } else {
+      filesHTML = userFiles.map(function(f) {
+        var thumb = (f.images && f.images[0]) ? '<img class="profile-file-thumb" src="' + f.images[0] + '">' : '<div class="profile-file-thumb" style="background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;">📄</div>';
+        var date = f.created_at ? f.created_at.slice(0,10) : '';
+        var actionBtns = isMe ?
+          '<div class="profile-file-actions">' +
+          '<button class="edit-btn" onclick="openEditModal(\'' + (f._id || f.id) + '\');closeModal(\'profile-modal\')">编辑</button>' +
+          '<button class="del-btn" onclick="doDeleteFile(\'' + (f._id || f.id) + '\');closeModal(\'profile-modal\')">删除</button>' +
+          '</div>' : '';
+        return '<div class="profile-file-item">' + thumb +
+          '<div class="profile-file-info">' +
+            '<div class="profile-file-name" onclick="closeModal(\'profile-modal\');openDetail(\'' + (f._id || f.id) + '\')">' + escHtml(f.title) + '</div>' +
+            '<div class="profile-file-date">' + date + ' · ⬇ ' + (f.downloads || 0) + '</div>' +
+          '</div>' + actionBtns + '</div>';
+      }).join('');
+    }
+    document.getElementById('profile-content').innerHTML =
+      '<div class="profile-header">' +
+        '<div class="profile-big-avatar">' + avatarHTML + '</div>' +
+        '<div class="profile-name">' + escHtml(user.username) + officialBadge(user.username) + '</div>' +
+        '<div class="profile-joined">加入于 ' + joined + (isMe ? ' · 这是你的主页' : '') + '</div>' +
+      '</div>' +
+      '<div class="profile-files-title">上传的文件（' + userFiles.length + '）</div>' +
+      filesHTML;
+    openModal('profile-modal');
+  }).catch(function() { showToast('加载失败', 'error'); });
+}
+
+// ── SETTINGS ──
+var LANGS = {
+  zh: { upload: '＋ 上传', logout: '退出', search: '搜索', searchPh: '🔍 搜索标题、描述、标签…', latest: '最新资源', free: '免费', all: '全部', pdf: 'PDF', doc: '文档', ppt: '演示', other: '其他', download: '⬇ 免费下载', uploadFile: '上传文件', theme: '☀️ 浅色', themeDark: '🌙 深色' },
+  en: { upload: '＋ Upload', logout: 'Logout', search: 'Search', searchPh: '🔍 Search title, desc, tags…', latest: 'Latest Resources', free: 'Free', all: 'All', pdf: 'PDF', doc: 'Docs', ppt: 'Slides', other: 'Other', download: '⬇ Free Download', uploadFile: 'Upload File', theme: '☀️ Light', themeDark: '🌙 Dark' },
+  ja: { upload: '＋ アップロード', logout: 'ログアウト', search: '検索', searchPh: '🔍 タイトル・説明・タグ検索…', latest: '最新リソース', free: '無料', all: 'すべて', pdf: 'PDF', doc: '文書', ppt: 'スライド', other: 'その他', download: '⬇ 無料DL', uploadFile: 'ファイルアップロード', theme: '☀️ ライト', themeDark: '🌙 ダーク' },
+  ko: { upload: '＋ 업로드', logout: '로그아웃', search: '검색', searchPh: '🔍 제목・설명・태그 검색…', latest: '최신 자료', free: '무료', all: '전체', pdf: 'PDF', doc: '문서', ppt: '슬라이드', other: '기타', download: '⬇ 무료 다운', uploadFile: '파일 업로드', theme: '☀️ 라이트', themeDark: '🌙 다크' },
+  fr: { upload: '＋ Téléverser', logout: 'Déconnexion', search: 'Rechercher', searchPh: '🔍 Chercher titre, description…', latest: 'Dernières ressources', free: 'Gratuit', all: 'Tout', pdf: 'PDF', doc: 'Documents', ppt: 'Présentations', other: 'Autre', download: '⬇ Télécharger', uploadFile: 'Téléverser', theme: '☀️ Clair', themeDark: '🌙 Sombre' },
+  es: { upload: '＋ Subir', logout: 'Salir', search: 'Buscar', searchPh: '🔍 Buscar título, descripción…', latest: 'Últimos recursos', free: 'Gratis', all: 'Todo', pdf: 'PDF', doc: 'Documentos', ppt: 'Presentaciones', other: 'Otro', download: '⬇ Descargar gratis', uploadFile: 'Subir archivo', theme: '☀️ Claro', themeDark: '🌙 Oscuro' }
+};
+var currentLang = localStorage.getItem('shareDo_lang') || 'zh';
+var currentTheme = localStorage.getItem('shareDo_theme') || 'light';
+
+function applyLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('shareDo_lang', lang);
+  var t = LANGS[lang] || LANGS.zh;
+  var searchEl = document.getElementById('search-input');
+  if (searchEl) searchEl.placeholder = t.searchPh;
+  var titleEl = document.querySelector('.section-title');
+  if (titleEl) titleEl.textContent = t.latest;
+  var searchBtn = document.querySelector('.search-btn');
+  if (searchBtn) searchBtn.textContent = t.search;
+  var chips = document.querySelectorAll('.filter-chip');
+  var chipKeys = ['all','pdf','doc','ppt','other'];
+  chips.forEach(function(c, i) { if (chipKeys[i] && t[chipKeys[i]]) c.textContent = t[chipKeys[i]]; });
+  document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
+  loadFiles();
+}
+
+function applyTheme(theme) {
+  currentTheme = theme;
+  localStorage.setItem('shareDo_theme', theme);
+  document.body.classList.toggle('dark', theme === 'dark');
+  document.getElementById('theme-light') && document.getElementById('theme-light').classList.toggle('active', theme === 'light');
+  document.getElementById('theme-dark') && document.getElementById('theme-dark').classList.toggle('active', theme === 'dark');
+}
+
+function setLang(lang) { applyLang(lang); }
+function setTheme(theme) { applyTheme(theme); }
 
 function escHtml(str) {
   if (!str) return '';

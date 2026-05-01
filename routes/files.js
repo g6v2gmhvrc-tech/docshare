@@ -115,7 +115,43 @@ router.post('/', requireAuth, upload.fields([
   }
 });
 
-// GET /api/files/:id/download  (using GET so <a> link works)
+// PUT /api/files/:id - edit
+router.put('/:id', requireAuth, upload.fields([{ name: 'images', maxCount: 8 }]), async (req, res) => {
+  try {
+    const file = await files.findOne({ _id: req.params.id });
+    if (!file) return res.status(404).json({ error: '文件不存在' });
+    if (file.user_id !== req.session.user.id) return res.status(403).json({ error: '无权限' });
+    const { title, description, category, tags } = req.body;
+    if (!title) return res.status(400).json({ error: '请填写标题' });
+    const tagArr = tags ? tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+    const newImgs = req.files && req.files.images ? req.files.images.map(f => '/uploads/' + f.filename) : [];
+    const images = newImgs.length > 0 ? newImgs : file.images;
+    await files.update({ _id: req.params.id }, { $set: { title, description: description || '', category: category || 'other', tags: tagArr, images } });
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: '保存失败' });
+  }
+});
+
+// DELETE /api/files/:id
+router.delete('/:id', requireAuth, async (req, res) => {
+  try {
+    const file = await files.findOne({ _id: req.params.id });
+    if (!file) return res.status(404).json({ error: '文件不存在' });
+    if (file.user_id !== req.session.user.id) return res.status(403).json({ error: '无权限' });
+    // Delete physical file
+    const filePath = path.join(__dirname, '../public/uploads', file.filename);
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    await files.remove({ _id: req.params.id });
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: '删除失败' });
+  }
+});
+
+// GET /api/files/:id/download
 router.get('/:id/download', async (req, res) => {
   try {
     const file = await files.findOne({ _id: req.params.id });

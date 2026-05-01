@@ -7,6 +7,7 @@ const fs = require('fs');
 require('./db'); // init db
 const authRoutes = require('./routes/auth');
 const fileRoutes = require('./routes/files');
+const userRoutes = require('./routes/users');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,6 +32,7 @@ app.use(session({
 
 app.use('/auth', authRoutes);
 app.use('/api/files', fileRoutes);
+app.use('/api/users', userRoutes);
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
