@@ -89,7 +89,7 @@ router.post('/', requireAuth, upload.fields([
 
 
     const docFile = req.files.file[0];
-    const imgPaths = req.files.images.map(f => '/uploads/' + f.filename);
+    const imgPaths = (req.files.images || []).map(f => '/uploads/' + f.filename);
     const tagArr = tags ? tags.split(',').map(t => t.trim()).filter(Boolean) : [];
 
     const record = await files.insert({
