@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ShareDo — 文件分享平台</title>
+<title>Commoit</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -176,7 +176,7 @@ body.dark .form-input { color: var(--text); }
 <body>
 
 <nav>
-  <div class="logo" onclick="window.location.href='/'"<>Share<span>Do</span></div>
+  <div class="logo" onclick="window.location.href='/'">Com<span>moit</span></div>
   <div class="nav-right" id="nav-right">
     <button class="btn btn-ghost" onclick="openModal('login-modal')">登录</button>
     <button class="btn btn-primary" onclick="openModal('register-modal')">免费注册</button>
@@ -186,7 +186,7 @@ body.dark .form-input { color: var(--text); }
 <div id="hero-section">
   <div class="hero">
     <div class="hero-tag">✦ 文件分享社区</div>
-    <h1><em>ShareDo</em></h1>
+    <h1><em>Commoit</em></h1>
     <p>上传 PDF、文档、课件，与所有人共享你的创作</p>
     <div class="hero-btns">
       <button class="btn btn-white" onclick="openModal('register-modal')">立即注册 →</button>
@@ -693,7 +693,7 @@ function cardHTML(f) {
           '<div class="author-avatar">' + avatarHTML + '</div>' +
           '<div><div class="author-name" style="display:flex;align-items:center;">' + escHtml(f.username) + officialBadge(f.username) + '</div><div class="author-date">' + date + '</div></div>' +
         '</div>' +
-        '<span class="card-price">免费</span>' +
+        '<span class="card-price">' + t('free') + '</span>' +
       '</div>' +
     '</div></div>';
 }
@@ -713,8 +713,8 @@ function openDetail(id) {
     var uid = f.user_id || '';
     var isOwner = currentUser && (currentUser.id === f.user_id || currentUser.id === f._id);
     var ownerBtns = isOwner ?
-      '<button class="btn btn-ghost btn-sm" onclick="openEditModal(\'' + (f._id || f.id) + '\')">✏️ 编辑</button>' +
-      '<button class="btn btn-danger btn-sm" onclick="doDeleteFile(\'' + (f._id || f.id) + '\')">🗑 删除</button>' : '';
+      '<button class="btn btn-ghost btn-sm" onclick="openEditModal(\'' + (f._id || f.id) + '\')">✏️ ' + t('edit') + '</button>' +
+      '<button class="btn btn-danger btn-sm" onclick="doDeleteFile(\'' + (f._id || f.id) + '\')">🗑 ' + t('del') + '</button>' : '';
     document.getElementById('detail-content').innerHTML =
       (mainImg ? '<img class="detail-main-img" id="detail-main-img" src="' + mainImg + '">' : '') +
       (thumbsHTML ? '<div class="detail-thumbs">' + thumbsHTML + '</div>' : '') +
@@ -727,7 +727,7 @@ function openDetail(id) {
       (tagsHTML ? '<div class="detail-tags">' + tagsHTML + '</div>' : '') +
       (f.description ? '<p class="detail-desc">' + escHtml(f.description) + '</p>' : '') +
       '<div class="detail-download-row">' +
-        '<button class="btn btn-primary" style="flex:1;padding:12px;font-size:15px;" data-id="' + (f._id || f.id) + '" data-name="' + escHtml(f.original_name || f.title) + '" onclick="handleDownload(this.dataset.id,this.dataset.name)">⬇ 免费下载</button>' +
+        '<button class="btn btn-primary" style="flex:1;padding:12px;font-size:15px;" data-id="' + (f._id || f.id) + '" data-name="' + escHtml(f.original_name || f.title) + '" onclick="handleDownload(this.dataset.id,this.dataset.name)">' + t('download') + '</button>' +
         ownerBtns +
       '</div>';
     openModal('detail-modal');
@@ -748,7 +748,8 @@ function handleDownload(id, name) {
 
 // ── DELETE FILE ──
 function doDeleteFile(id) {
-  if (!confirm('确定要删除这个文件吗？此操作不可撤销。')) return;
+  var confirmMsg = { zh:'确定要删除这个文件吗？此操作不可撤销。', en:'Delete this file? This cannot be undone.', ja:'このファイルを削除しますか？', ko:'이 파일을 삭제하시겠습니까?', fr:'Supprimer ce fichier ? Action irréversible.', es:'¿Eliminar este archivo? Esta acción es irreversible.' };
+  if (!confirm(confirmMsg[currentLang] || confirmMsg.zh)) return;
   fetch('/api/files/' + id, { method: 'DELETE' }).then(function(r) { return r.json(); }).then(function(data) {
     if (data.error) { showToast(data.error, 'error'); return; }
     closeModal('detail-modal');
@@ -842,15 +843,15 @@ function openProfile(userId) {
     var isMe = currentUser && currentUser.id === userId;
     var filesHTML = '';
     if (!userFiles.length) {
-      filesHTML = '<p style="font-size:14px;color:var(--text3);text-align:center;padding:20px 0;">暂无上传文件</p>';
+      filesHTML = '<p style="font-size:14px;color:var(--text3);text-align:center;padding:20px 0;">' + t('noFiles') + '</p>';
     } else {
       filesHTML = userFiles.map(function(f) {
         var thumb = (f.images && f.images[0]) ? '<img class="profile-file-thumb" src="' + f.images[0] + '">' : '<div class="profile-file-thumb" style="background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;">📄</div>';
         var date = f.created_at ? f.created_at.slice(0,10) : '';
         var actionBtns = isMe ?
           '<div class="profile-file-actions">' +
-          '<button class="edit-btn" onclick="openEditModal(\'' + (f._id || f.id) + '\');closeModal(\'profile-modal\')">编辑</button>' +
-          '<button class="del-btn" onclick="doDeleteFile(\'' + (f._id || f.id) + '\');closeModal(\'profile-modal\')">删除</button>' +
+          '<button class="edit-btn" onclick="openEditModal(\'' + (f._id || f.id) + '\');closeModal(\'profile-modal\')">' + t('edit') + '</button>' +
+          '<button class="del-btn" onclick="doDeleteFile(\'' + (f._id || f.id) + '\');closeModal(\'profile-modal\')">' + t('del') + '</button>' +
           '</div>' : '';
         return '<div class="profile-file-item">' + thumb +
           '<div class="profile-file-info">' +
@@ -863,9 +864,9 @@ function openProfile(userId) {
       '<div class="profile-header">' +
         '<div class="profile-big-avatar">' + avatarHTML + '</div>' +
         '<div class="profile-name">' + escHtml(user.username) + officialBadge(user.username) + '</div>' +
-        '<div class="profile-joined">加入于 ' + joined + (isMe ? ' · 这是你的主页' : '') + '</div>' +
+        '<div class="profile-joined">' + t('joined') + ' ' + joined + (isMe ? ' · ' + t('myPage') : '') + '</div>' +
       '</div>' +
-      '<div class="profile-files-title">上传的文件（' + userFiles.length + '）</div>' +
+      '<div class="profile-files-title">' + t('uploadedFiles') + '（' + userFiles.length + '）</div>' +
       filesHTML;
     openModal('profile-modal');
   }).catch(function() { showToast('加载失败', 'error'); });
@@ -873,30 +874,45 @@ function openProfile(userId) {
 
 // ── SETTINGS ──
 var LANGS = {
-  zh: { upload: '＋ 上传', logout: '退出', search: '搜索', searchPh: '🔍 搜索标题、描述、标签…', latest: '最新资源', free: '免费', all: '全部', pdf: 'PDF', doc: '文档', ppt: '演示', other: '其他', download: '⬇ 免费下载', uploadFile: '上传文件', theme: '☀️ 浅色', themeDark: '🌙 深色' },
-  en: { upload: '＋ Upload', logout: 'Logout', search: 'Search', searchPh: '🔍 Search title, desc, tags…', latest: 'Latest Resources', free: 'Free', all: 'All', pdf: 'PDF', doc: 'Docs', ppt: 'Slides', other: 'Other', download: '⬇ Free Download', uploadFile: 'Upload File', theme: '☀️ Light', themeDark: '🌙 Dark' },
-  ja: { upload: '＋ アップロード', logout: 'ログアウト', search: '検索', searchPh: '🔍 タイトル・説明・タグ検索…', latest: '最新リソース', free: '無料', all: 'すべて', pdf: 'PDF', doc: '文書', ppt: 'スライド', other: 'その他', download: '⬇ 無料DL', uploadFile: 'ファイルアップロード', theme: '☀️ ライト', themeDark: '🌙 ダーク' },
-  ko: { upload: '＋ 업로드', logout: '로그아웃', search: '검색', searchPh: '🔍 제목・설명・태그 검색…', latest: '최신 자료', free: '무료', all: '전체', pdf: 'PDF', doc: '문서', ppt: '슬라이드', other: '기타', download: '⬇ 무료 다운', uploadFile: '파일 업로드', theme: '☀️ 라이트', themeDark: '🌙 다크' },
-  fr: { upload: '＋ Téléverser', logout: 'Déconnexion', search: 'Rechercher', searchPh: '🔍 Chercher titre, description…', latest: 'Dernières ressources', free: 'Gratuit', all: 'Tout', pdf: 'PDF', doc: 'Documents', ppt: 'Présentations', other: 'Autre', download: '⬇ Télécharger', uploadFile: 'Téléverser', theme: '☀️ Clair', themeDark: '🌙 Sombre' },
-  es: { upload: '＋ Subir', logout: 'Salir', search: 'Buscar', searchPh: '🔍 Buscar título, descripción…', latest: 'Últimos recursos', free: 'Gratis', all: 'Todo', pdf: 'PDF', doc: 'Documentos', ppt: 'Presentaciones', other: 'Otro', download: '⬇ Descargar gratis', uploadFile: 'Subir archivo', theme: '☀️ Claro', themeDark: '🌙 Oscuro' }
+  zh: { upload: '＋ 上传', logout: '退出', search: '搜索', searchPh: '🔍 搜索标题、描述、标签…', latest: '最新资源', free: '免费', all: '全部', pdf: 'PDF', doc: '文档', ppt: '演示', other: '其他', download: '⬇ 免费下载', uploadFile: '上传文件', theme: '☀️ 浅色', themeDark: '🌙 深色', edit: '编辑', del: '删除', joined: '加入于', myPage: '这是你的主页', uploadedFiles: '上传的文件', noFiles: '暂无上传文件', loading: '加载中…', loadFail: '加载失败', settings: '⚙️ 设置', about: '关于', settingsSub: '个性化你的 ShareDo 体验', langLabel: '🌐 语言 / Language', themeLabel: '🎨 主题 / Theme' },
+  en: { upload: '＋ Upload', logout: 'Logout', search: 'Search', searchPh: '🔍 Search title, desc, tags…', latest: 'Latest Resources', free: 'Free', all: 'All', pdf: 'PDF', doc: 'Docs', ppt: 'Slides', other: 'Other', download: '⬇ Free Download', uploadFile: 'Upload File', theme: '☀️ Light', themeDark: '🌙 Dark', edit: 'Edit', del: 'Delete', joined: 'Joined', myPage: 'This is your page', uploadedFiles: 'Uploaded Files', noFiles: 'No files uploaded yet', loading: 'Loading…', loadFail: 'Load failed', settings: '⚙️ Settings', about: 'About', settingsSub: 'Personalize your ShareDo experience', langLabel: '🌐 Language', themeLabel: '🎨 Theme' },
+  ja: { upload: '＋ アップロード', logout: 'ログアウト', search: '検索', searchPh: '🔍 タイトル・説明・タグ検索…', latest: '最新リソース', free: '無料', all: 'すべて', pdf: 'PDF', doc: '文書', ppt: 'スライド', other: 'その他', download: '⬇ 無料DL', uploadFile: 'アップロード', theme: '☀️ ライト', themeDark: '🌙 ダーク', edit: '編集', del: '削除', joined: '参加日', myPage: 'マイページ', uploadedFiles: 'アップロード済み', noFiles: 'ファイルがありません', loading: '読み込み中…', loadFail: '読み込み失敗', settings: '⚙️ 設定', about: 'について', settingsSub: 'ShareDoをカスタマイズ', langLabel: '🌐 言語', themeLabel: '🎨 テーマ' },
+  ko: { upload: '＋ 업로드', logout: '로그아웃', search: '검색', searchPh: '🔍 제목・설명・태그 검색…', latest: '최신 자료', free: '무료', all: '전체', pdf: 'PDF', doc: '문서', ppt: '슬라이드', other: '기타', download: '⬇ 무료 다운', uploadFile: '파일 업로드', theme: '☀️ 라이트', themeDark: '🌙 다크', edit: '편집', del: '삭제', joined: '가입일', myPage: '내 페이지', uploadedFiles: '업로드한 파일', noFiles: '업로드된 파일 없음', loading: '로딩 중…', loadFail: '로드 실패', settings: '⚙️ 설정', about: '정보', settingsSub: 'ShareDo 맞춤 설정', langLabel: '🌐 언어', themeLabel: '🎨 테마' },
+  fr: { upload: '＋ Téléverser', logout: 'Déconnexion', search: 'Rechercher', searchPh: '🔍 Chercher titre, description…', latest: 'Dernières ressources', free: 'Gratuit', all: 'Tout', pdf: 'PDF', doc: 'Documents', ppt: 'Présentations', other: 'Autre', download: '⬇ Télécharger', uploadFile: 'Téléverser', theme: '☀️ Clair', themeDark: '🌙 Sombre', edit: 'Modifier', del: 'Supprimer', joined: 'Inscrit le', myPage: 'Ma page', uploadedFiles: 'Fichiers uploadés', noFiles: 'Aucun fichier', loading: 'Chargement…', loadFail: 'Échec du chargement', settings: '⚙️ Paramètres', about: 'À propos', settingsSub: 'Personnalisez ShareDo', langLabel: '🌐 Langue', themeLabel: '🎨 Thème' },
+  es: { upload: '＋ Subir', logout: 'Salir', search: 'Buscar', searchPh: '🔍 Buscar título, descripción…', latest: 'Últimos recursos', free: 'Gratis', all: 'Todo', pdf: 'PDF', doc: 'Documentos', ppt: 'Presentaciones', other: 'Otro', download: '⬇ Descargar gratis', uploadFile: 'Subir archivo', theme: '☀️ Claro', themeDark: '🌙 Oscuro', edit: 'Editar', del: 'Eliminar', joined: 'Unido el', myPage: 'Mi página', uploadedFiles: 'Archivos subidos', noFiles: 'Sin archivos', loading: 'Cargando…', loadFail: 'Error al cargar', settings: '⚙️ Ajustes', about: 'Acerca de', settingsSub: 'Personaliza tu ShareDo', langLabel: '🌐 Idioma', themeLabel: '🎨 Tema' }
 };
 var currentLang = localStorage.getItem('shareDo_lang') || 'zh';
 var currentTheme = localStorage.getItem('shareDo_theme') || 'light';
 
+function t(key) { return (LANGS[currentLang] || LANGS.zh)[key] || (LANGS.zh)[key] || key; }
+
 function applyLang(lang) {
   currentLang = lang;
   localStorage.setItem('shareDo_lang', lang);
-  var t = LANGS[lang] || LANGS.zh;
+  // Search bar
   var searchEl = document.getElementById('search-input');
-  if (searchEl) searchEl.placeholder = t.searchPh;
+  if (searchEl) searchEl.placeholder = t('searchPh');
   var titleEl = document.querySelector('.section-title');
-  if (titleEl) titleEl.textContent = t.latest;
+  if (titleEl) titleEl.textContent = t('latest');
   var searchBtn = document.querySelector('.search-btn');
-  if (searchBtn) searchBtn.textContent = t.search;
+  if (searchBtn) searchBtn.textContent = t('search');
+  // Upload btn
+  var upBtnWrap = document.getElementById('upload-btn-wrap');
+  if (upBtnWrap) { var upBtn = upBtnWrap.querySelector('button'); if (upBtn) upBtn.textContent = t('uploadFile'); }
+  // Filter chips
   var chips = document.querySelectorAll('.filter-chip');
   var chipKeys = ['all','pdf','doc','ppt','other'];
-  chips.forEach(function(c, i) { if (chipKeys[i] && t[chipKeys[i]]) c.textContent = t[chipKeys[i]]; });
+  chips.forEach(function(c, i) { if (chipKeys[i]) c.textContent = t(chipKeys[i]); });
+  // Nav buttons (upload + logout) if logged in
+  if (currentUser) {
+    var uploadNavBtn = document.querySelector('.btn-primary.btn-sm');
+    if (uploadNavBtn) uploadNavBtn.textContent = t('upload');
+    var logoutBtn = document.querySelector('button.btn-ghost.btn-sm:last-child');
+    if (logoutBtn) logoutBtn.textContent = t('logout');
+  }
+  // Lang selector highlight
   document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.dataset.lang === lang); });
+  // Re-render cards to update "free" label
   loadFiles();
 }
 
