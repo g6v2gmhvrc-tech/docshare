@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文档编辑器 — Commoit</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#F8F9FA;--surface:#FFFFFF;--surface2:#F1F3F4;
+  --text:#202124;--text2:#5F6368;--text3:#9AA0A6;
+  --border:#DADCE0;--accent:#1A73E8;--accent2:#1557B0;
+  --accent-light:#E8F0FE;--danger:#D93025;--gold:#F9AB00;
+  --radius:8px;--radius-sm:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+
+/* TOP BAR */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;height:60px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+.doc-icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.doc-meta{display:flex;flex-direction:column;flex:1;}
+.doc-title-input{border:none;outline:none;font-size:18px;font-weight:500;color:var(--text);background:transparent;width:100%;padding:2px 6px;border-radius:4px;transition:background 0.15s;}
+.doc-title-input:hover{background:var(--surface2);}
+.doc-title-input:focus{background:var(--accent-light);}
+.doc-status{font-size:12px;color:var(--text3);padding-left:6px;height:18px;}
+.topbar-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.btn{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:8px 16px;border-radius:var(--radius);border:none;cursor:pointer;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:var(--accent);color:white;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--surface2);}
+.btn-icon{width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:50%;background:transparent;border:none;cursor:pointer;font-size:16px;color:var(--text2);transition:background 0.15s;}
+.btn-icon:hover{background:var(--surface2);}
+.back-link{display:flex;align-items:center;gap:4px;color:var(--text2);text-decoration:none;font-size:13px;padding:6px 10px;border-radius:var(--radius);transition:background 0.15s;}
+.back-link:hover{background:var(--surface2);}
+
+/* MENU BAR */
+.menubar{background:var(--surface);border-bottom:1px solid var(--border);padding:2px 16px;display:flex;align-items:center;gap:2px;flex-wrap:wrap;}
+.menu-btn{font-size:13px;color:var(--text2);padding:5px 10px;border-radius:4px;cursor:pointer;border:none;background:transparent;font-family:'DM Sans',sans-serif;transition:background 0.15s;}
+.menu-btn:hover{background:var(--surface2);}
+.menu-sep{width:1px;height:18px;background:var(--border);margin:0 4px;}
+
+/* TOOLBAR */
+.toolbar{background:var(--surface);border-bottom:1px solid var(--border);padding:4px 16px;display:flex;align-items:center;gap:2px;flex-wrap:wrap;position:sticky;top:60px;z-index:99;}
+.tool-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:4px;cursor:pointer;border:none;background:transparent;font-size:14px;color:var(--text);transition:background 0.15s;font-family:'DM Sans',sans-serif;font-weight:500;}
+.tool-btn:hover{background:var(--surface2);}
+.tool-btn.active{background:var(--accent-light);color:var(--accent);}
+.tool-sep{width:1px;height:20px;background:var(--border);margin:0 4px;}
+.font-select{height:28px;border:1px solid var(--border);border-radius:4px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);padding:0 6px;cursor:pointer;outline:none;}
+.font-select:focus{border-color:var(--accent);}
+.font-size-input{width:48px;height:28px;border:1px solid var(--border);border-radius:4px;font-size:13px;font-family:'DM Sans',sans-serif;text-align:center;color:var(--text);background:var(--surface);padding:0 4px;outline:none;}
+.font-size-input:focus{border-color:var(--accent);}
+.color-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:4px;cursor:pointer;border:none;background:transparent;position:relative;}
+.color-btn:hover{background:var(--surface2);}
+.color-indicator{position:absolute;bottom:3px;left:4px;right:4px;height:3px;border-radius:2px;}
+input[type=color]{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;}
+
+/* PAGE AREA */
+.page-area{flex:1;background:var(--bg);padding:32px 16px;overflow-y:auto;display:flex;flex-direction:column;align-items:center;}
+.page{background:var(--surface);width:816px;max-width:100%;min-height:1056px;padding:96px 96px;box-shadow:0 1px 4px rgba(0,0,0,0.15),0 4px 16px rgba(0,0,0,0.06);border-radius:2px;margin-bottom:24px;position:relative;}
+.editor{outline:none;min-height:864px;font-size:11pt;line-height:1.6;color:var(--text);font-family:'DM Sans',sans-serif;word-break:break-word;}
+.editor:empty:before{content:attr(data-placeholder);color:var(--text3);pointer-events:none;}
+.editor p{margin:0;padding:0;min-height:1.6em;}
+.editor h1{font-size:24pt;font-weight:700;line-height:1.3;margin-bottom:8px;font-family:'Playfair Display',serif;}
+.editor h2{font-size:18pt;font-weight:600;line-height:1.35;margin-bottom:6px;font-family:'Playfair Display',serif;}
+.editor h3{font-size:14pt;font-weight:600;line-height:1.4;margin-bottom:4px;}
+.editor ul,.editor ol{padding-left:24px;margin:4px 0;}
+.editor blockquote{border-left:4px solid var(--border);padding-left:16px;color:var(--text2);font-style:italic;margin:8px 0;}
+.editor a{color:var(--accent);text-decoration:underline;}
+.editor table{border-collapse:collapse;width:100%;margin:8px 0;}
+.editor td,.editor th{border:1px solid var(--border);padding:6px 10px;min-width:60px;}
+.editor th{background:var(--surface2);font-weight:600;}
+.editor img{max-width:100%;height:auto;border-radius:4px;}
+.editor hr{border:none;border-top:2px solid var(--border);margin:12px 0;}
+
+/* PAGE CONTROLS */
+.page-number{text-align:center;color:var(--text3);font-size:12px;margin-bottom:8px;}
+
+/* WORD COUNT */
+.statusbar{background:var(--surface);border-top:1px solid var(--border);padding:4px 24px;font-size:12px;color:var(--text3);display:flex;align-items:center;gap:16px;}
+
+/* SHARE MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(2px);z-index:500;display:none;align-items:center;justify-content:center;padding:16px;}
+.overlay.active{display:flex;}
+.modal{background:var(--surface);border-radius:12px;padding:32px;width:100%;max-width:440px;box-shadow:0 8px 40px rgba(0,0,0,0.15);animation:slideUp 0.2s ease;position:relative;}
+@keyframes slideUp{from{transform:translateY(16px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.modal h3{font-size:18px;font-weight:600;margin-bottom:16px;}
+.close-btn{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;background:var(--surface2);border:none;cursor:pointer;font-size:14px;color:var(--text2);display:flex;align-items:center;justify-content:center;}
+.close-btn:hover{background:var(--border);}
+.share-link-box{display:flex;gap:8px;margin-top:12px;}
+.share-link-input{flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--text2);background:var(--surface2);outline:none;font-family:'DM Sans',sans-serif;}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:white;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:500;z-index:1000;transform:translateY(60px);transition:transform 0.25s;box-shadow:0 4px 16px rgba(0,0,0,0.2);}
+.toast.show{transform:translateY(0);}
+.toast.success{background:#188038;}
+
+/* DROPDOWN */
+.dropdown{position:relative;display:inline-block;}
+.dropdown-menu{position:absolute;top:100%;left:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 4px 20px rgba(0,0,0,0.12);min-width:160px;z-index:200;display:none;padding:4px 0;}
+.dropdown-menu.show{display:block;}
+.dropdown-item{padding:8px 16px;font-size:13px;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:10px;transition:background 0.1s;}
+.dropdown-item:hover{background:var(--surface2);}
+.dropdown-item .shortcut{margin-left:auto;color:var(--text3);font-size:11px;}
+
+@media(max-width:768px){
+  .page{padding:48px 32px;min-height:auto;}
+  .topbar{gap:8px;}
+  .menubar{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <a href="/" class="back-link" id="back-link">← <span id="lbl-home">主页</span></a>
+  <div class="doc-icon">📄</div>
+  <div class="doc-meta">
+    <input class="doc-title-input" id="doc-title" value="" placeholder="无标题文档" oninput="markDirty()">
+    <div class="doc-status" id="doc-status"></div>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn btn-ghost" onclick="downloadDoc()" id="btn-download">⬇ <span id="lbl-download">下载</span></button>
+    <button class="btn btn-ghost" onclick="openModal('share-modal')" id="btn-share">🔗 <span id="lbl-share">分享</span></button>
+    <button class="btn btn-primary" onclick="saveDoc()" id="btn-save">💾 <span id="lbl-save">保存</span></button>
+  </div>
+</div>
+
+<!-- MENU BAR -->
+<div class="menubar">
+  <div class="dropdown">
+    <button class="menu-btn" onclick="toggleDropdown('dd-file')" id="lbl-file">文件</button>
+    <div class="dropdown-menu" id="dd-file">
+      <div class="dropdown-item" onclick="newDoc()">🆕 <span id="lbl-new">新建</span></div>
+      <div class="dropdown-item" onclick="saveDoc()">💾 <span id="lbl-save2">保存</span> <span class="shortcut">Ctrl+S</span></div>
+      <div class="dropdown-item" onclick="downloadDoc()">⬇ <span id="lbl-dl">下载 .txt</span></div>
+      <div class="dropdown-item" onclick="downloadHTML()">📄 <span id="lbl-dlhtml">下载 .html</span></div>
+    </div>
+  </div>
+  <div class="dropdown">
+    <button class="menu-btn" onclick="toggleDropdown('dd-edit')" id="lbl-edit-menu">编辑</button>
+    <div class="dropdown-menu" id="dd-edit">
+      <div class="dropdown-item" onclick="document.execCommand('undo')">↩ <span id="lbl-undo">撤销</span> <span class="shortcut">Ctrl+Z</span></div>
+      <div class="dropdown-item" onclick="document.execCommand('redo')">↪ <span id="lbl-redo">重做</span> <span class="shortcut">Ctrl+Y</span></div>
+      <div class="dropdown-item" onclick="selectAll()">⬜ <span id="lbl-selall">全选</span> <span class="shortcut">Ctrl+A</span></div>
+    </div>
+  </div>
+  <div class="dropdown">
+    <button class="menu-btn" onclick="toggleDropdown('dd-insert')" id="lbl-insert">插入</button>
+    <div class="dropdown-menu" id="dd-insert">
+      <div class="dropdown-item" onclick="insertTable()">⊞ <span id="lbl-table">表格 3×3</span></div>
+      <div class="dropdown-item" onclick="insertHR()">― <span id="lbl-hr">分隔线</span></div>
+      <div class="dropdown-item" onclick="insertImg()">🖼 <span id="lbl-img">图片</span></div>
+      <div class="dropdown-item" onclick="insertLink()">🔗 <span id="lbl-link">链接</span></div>
+    </div>
+  </div>
+  <div class="dropdown">
+    <button class="menu-btn" onclick="toggleDropdown('dd-format')" id="lbl-format">格式</button>
+    <div class="dropdown-menu" id="dd-format">
+      <div class="dropdown-item" onclick="applyBlock('h1')">H1 <span id="lbl-h1">大标题</span></div>
+      <div class="dropdown-item" onclick="applyBlock('h2')">H2 <span id="lbl-h2">中标题</span></div>
+      <div class="dropdown-item" onclick="applyBlock('h3')">H3 <span id="lbl-h3">小标题</span></div>
+      <div class="dropdown-item" onclick="applyBlock('p')">¶ <span id="lbl-normal">正文</span></div>
+      <div class="dropdown-item" onclick="applyBlock('blockquote')">❝ <span id="lbl-quote">引用</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <select class="font-select" id="font-family" onchange="applyFont(this.value)">
+    <option value="DM Sans">DM Sans</option>
+    <option value="Playfair Display">Playfair Display</option>
+    <option value="Arial">Arial</option>
+    <option value="Georgia">Georgia</option>
+    <option value="Courier New">Courier New</option>
+    <option value="Times New Roman">Times New Roman</option>
+    <option value="Verdana">Verdana</option>
+  </select>
+  <div class="tool-sep"></div>
+  <input class="font-size-input" id="font-size" type="number" value="11" min="6" max="96" onchange="applyFontSize(this.value)">
+  <div class="tool-sep"></div>
+  <button class="tool-btn" onclick="cmd('bold')" title="粗体 Ctrl+B"><b>B</b></button>
+  <button class="tool-btn" onclick="cmd('italic')" title="斜体 Ctrl+I"><i>I</i></button>
+  <button class="tool-btn" onclick="cmd('underline')" title="下划线 Ctrl+U"><u>U</u></button>
+  <button class="tool-btn" onclick="cmd('strikeThrough')" title="删除线"><s>S</s></button>
+  <div class="tool-sep"></div>
+  <div class="color-btn" title="文字颜色">
+    <span style="font-size:14px;font-weight:700;">A</span>
+    <div class="color-indicator" id="text-color-bar" style="background:#000;"></div>
+    <input type="color" id="text-color" onchange="applyColor(this.value)" value="#000000">
+  </div>
+  <div class="color-btn" title="背景颜色">
+    <span style="font-size:14px;">🖊</span>
+    <div class="color-indicator" id="bg-color-bar" style="background:#FFFF00;"></div>
+    <input type="color" id="bg-color" onchange="applyBgColor(this.value)" value="#ffff00">
+  </div>
+  <div class="tool-sep"></div>
+  <button class="tool-btn" onclick="cmd('justifyLeft')" title="左对齐">⬤≡</button>
+  <button class="tool-btn" onclick="cmd('justifyCenter')" title="居中">≡≡</button>
+  <button class="tool-btn" onclick="cmd('justifyRight')" title="右对齐">≡⬤</button>
+  <button class="tool-btn" onclick="cmd('justifyFull')" title="两端对齐">☰</button>
+  <div class="tool-sep"></div>
+  <button class="tool-btn" onclick="cmd('insertUnorderedList')" title="无序列表">• ≡</button>
+  <button class="tool-btn" onclick="cmd('insertOrderedList')" title="有序列表">1 ≡</button>
+  <button class="tool-btn" onclick="cmd('outdent')" title="减少缩进">⇤</button>
+  <button class="tool-btn" onclick="cmd('indent')" title="增加缩进">⇥</button>
+  <div class="tool-sep"></div>
+  <button class="tool-btn" onclick="cmd('undo')" title="撤销 Ctrl+Z">↩</button>
+  <button class="tool-btn" onclick="cmd('redo')" title="重做 Ctrl+Y">↪</button>
+  <div class="tool-sep"></div>
+  <button class="tool-btn" onclick="cmd('removeFormat')" title="清除格式">✕A</button>
+</div>
+
+<!-- PAGE AREA -->
+<div class="page-area" id="page-area" onclick="focusEditor()">
+  <div class="page">
+    <div class="editor" id="editor" contenteditable="true" data-placeholder="开始输入…" oninput="onEdit()" onkeydown="handleKey(event)" onfocus="updateToolbar()" onmouseup="updateToolbar()" onkeyup="updateToolbar()">
+    </div>
+  </div>
+  <div class="page-number" id="page-num">第 1 页</div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  <span id="word-count">0 <span id="lbl-words">字</span></span>
+  <span id="char-count">0 <span id="lbl-chars">字符</span></span>
+  <span style="margin-left:auto;font-size:11px;" id="lbl-autosave">自动保存已开启</span>
+</div>
+
+<!-- SHARE MODAL -->
+<div class="overlay" id="share-modal">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('share-modal')">✕</button>
+    <h3 id="lbl-share-title">分享文档</h3>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px;" id="lbl-share-desc">复制链接分享给他人</p>
+    <div class="share-link-box">
+      <input class="share-link-input" id="share-link" readonly value="">
+      <button class="btn btn-primary" onclick="copyLink()" id="btn-copy">复制</button>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;" id="lbl-share-note">注意：链接中包含文档内容，请谨慎分享</p>
+  </div>
+</div>
+
+<input type="file" id="img-file-input" accept="image/*" style="display:none" onchange="handleImgFile(this)">
+<div class="toast" id="toast"></div>
+
+<script>
+// ── LANG ──
+var lang = localStorage.getItem('shareDo_lang') || 'zh';
+var I18N = {
+  zh: {
+    home:'主页', download:'下载', share:'分享', save:'保存',
+    file:'文件', new:'新建', save2:'保存', dl:'下载 .txt', dlhtml:'下载 .html',
+    editMenu:'编辑', undo:'撤销', redo:'重做', selall:'全选',
+    insert:'插入', table:'表格 3×3', hr:'分隔线', img:'图片', link:'链接',
+    format:'格式', h1:'大标题', h2:'中标题', h3:'小标题', normal:'正文', quote:'引用',
+    words:'字', chars:'字符', autosave:'自动保存已开启',
+    shareTitle:'分享文档', shareDesc:'复制链接分享给他人', shareNote:'注意：链接中包含文档内容，请谨慎分享', copy:'复制',
+    pageNum:'第 1 页', saved:'已保存', unsaved:'未保存的更改', placeholder:'开始输入…',
+    docTitle:'无标题文档', linkPrompt:'输入链接地址：', linkText:'输入链接文字：'
+  },
+  en: {
+    home:'Home', download:'Download', share:'Share', save:'Save',
+    file:'File', new:'New', save2:'Save', dl:'Download .txt', dlhtml:'Download .html',
+    editMenu:'Edit', undo:'Undo', redo:'Redo', selall:'Select All',
+    insert:'Insert', table:'Table 3×3', hr:'Divider', img:'Image', link:'Link',
+    format:'Format', h1:'Heading 1', h2:'Heading 2', h3:'Heading 3', normal:'Normal', quote:'Quote',
+    words:'words', chars:'chars', autosave:'Autosave on',
+    shareTitle:'Share Document', shareDesc:'Copy link to share', shareNote:'Note: Link contains document content.', copy:'Copy',
+    pageNum:'Page 1', saved:'Saved', unsaved:'Unsaved changes', placeholder:'Start typing…',
+    docTitle:'Untitled Document', linkPrompt:'Enter URL:', linkText:'Enter link text:'
+  },
+  ja: {
+    home:'ホーム', download:'DL', share:'共有', save:'保存',
+    file:'ファイル', new:'新規', save2:'保存', dl:'DL .txt', dlhtml:'DL .html',
+    editMenu:'編集', undo:'元に戻す', redo:'やり直し', selall:'全選択',
+    insert:'挿入', table:'表 3×3', hr:'区切り線', img:'画像', link:'リンク',
+    format:'書式', h1:'見出し1', h2:'見出し2', h3:'見出し3', normal:'本文', quote:'引用',
+    words:'字', chars:'文字', autosave:'自動保存オン',
+    shareTitle:'共有', shareDesc:'リンクをコピー', shareNote:'注意：内容が含まれます', copy:'コピー',
+    pageNum:'1ページ', saved:'保存済み', unsaved:'未保存', placeholder:'入力してください…',
+    docTitle:'無題のドキュメント', linkPrompt:'URLを入力：', linkText:'テキストを入力：'
+  },
+  ko: {
+    home:'홈', download:'다운로드', share:'공유', save:'저장',
+    file:'파일', new:'새로 만들기', save2:'저장', dl:'다운로드 .txt', dlhtml:'다운로드 .html',
+    editMenu:'편집', undo:'실행 취소', redo:'다시 실행', selall:'전체 선택',
+    insert:'삽입', table:'표 3×3', hr:'구분선', img:'이미지', link:'링크',
+    format:'형식', h1:'제목1', h2:'제목2', h3:'제목3', normal:'본문', quote:'인용',
+    words:'자', chars:'자', autosave:'자동 저장 켜짐',
+    shareTitle:'문서 공유', shareDesc:'링크 복사', shareNote:'주의: 내용이 포함됩니다', copy:'복사',
+    pageNum:'1 페이지', saved:'저장됨', unsaved:'저장 안 됨', placeholder:'입력하세요…',
+    docTitle:'제목 없는 문서', linkPrompt:'URL 입력:', linkText:'텍스트 입력:'
+  },
+  fr: {
+    home:'Accueil', download:'Télécharger', share:'Partager', save:'Enregistrer',
+    file:'Fichier', new:'Nouveau', save2:'Enregistrer', dl:'Télécharger .txt', dlhtml:'Télécharger .html',
+    editMenu:'Modifier', undo:'Annuler', redo:'Rétablir', selall:'Tout sélectionner',
+    insert:'Insérer', table:'Tableau 3×3', hr:'Séparateur', img:'Image', link:'Lien',
+    format:'Format', h1:'Titre 1', h2:'Titre 2', h3:'Titre 3', normal:'Normal', quote:'Citation',
+    words:'mots', chars:'caractères', autosave:'Sauvegarde auto activée',
+    shareTitle:'Partager', shareDesc:'Copier le lien', shareNote:'Note: le contenu est inclus.', copy:'Copier',
+    pageNum:'Page 1', saved:'Enregistré', unsaved:'Modifications non enregistrées', placeholder:'Commencer à écrire…',
+    docTitle:'Document sans titre', linkPrompt:'URL:', linkText:'Texte du lien:'
+  },
+  es: {
+    home:'Inicio', download:'Descargar', share:'Compartir', save:'Guardar',
+    file:'Archivo', new:'Nuevo', save2:'Guardar', dl:'Descargar .txt', dlhtml:'Descargar .html',
+    editMenu:'Editar', undo:'Deshacer', redo:'Rehacer', selall:'Seleccionar todo',
+    insert:'Insertar', table:'Tabla 3×3', hr:'Separador', img:'Imagen', link:'Enlace',
+    format:'Formato', h1:'Título 1', h2:'Título 2', h3:'Título 3', normal:'Normal', quote:'Cita',
+    words:'palabras', chars:'caracteres', autosave:'Guardado automático activado',
+    shareTitle:'Compartir', shareDesc:'Copiar enlace', shareNote:'Nota: el contenido está incluido.', copy:'Copiar',
+    pageNum:'Página 1', saved:'Guardado', unsaved:'Cambios sin guardar', placeholder:'Empezar a escribir…',
+    docTitle:'Documento sin título', linkPrompt:'URL:', linkText:'Texto del enlace:'
+  }
+};
+
+function t(k){ return (I18N[lang]||I18N.zh)[k]||k; }
+
+function applyLang() {
+  var T = I18N[lang]||I18N.zh;
+  document.title = T.docTitle + ' — Commoit';
+  var map = {
+    'lbl-home':T.home,'lbl-download':T.download,'lbl-share':T.share,'lbl-save':T.save,
+    'lbl-file':T.file,'lbl-new':T.new,'lbl-save2':T.save2,'lbl-dl':T.dl,'lbl-dlhtml':T.dlhtml,
+    'lbl-edit-menu':T.editMenu,'lbl-undo':T.undo,'lbl-redo':T.redo,'lbl-selall':T.selall,
+    'lbl-insert':T.insert,'lbl-table':T.table,'lbl-hr':T.hr,'lbl-img':T.img,'lbl-link':T.link,
+    'lbl-format':T.format,'lbl-h1':T.h1,'lbl-h2':T.h2,'lbl-h3':T.h3,'lbl-normal':T.normal,'lbl-quote':T.quote,
+    'lbl-words':T.words,'lbl-chars':T.chars,'lbl-autosave':T.autosave,
+    'lbl-share-title':T.shareTitle,'lbl-share-desc':T.shareDesc,'lbl-share-note':T.shareNote,'btn-copy':T.copy,
+    'page-num':T.pageNum
+  };
+  Object.keys(map).forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.textContent=map[id];
+  });
+  var editor=document.getElementById('editor');
+  if(editor) editor.setAttribute('data-placeholder',T.placeholder);
+  var titleInput=document.getElementById('doc-title');
+  if(titleInput && !titleInput.value) titleInput.placeholder=T.docTitle;
+}
+
+applyLang();
+
+// ── EDITOR ──
+var dirty = false;
+var autoSaveTimer = null;
+var docId = 'doc_' + Date.now();
+
+// Load from URL hash if shared
+(function loadShared(){
+  if(location.hash && location.hash.length > 1){
+    try{
+      var data = JSON.parse(decodeURIComponent(atob(location.hash.slice(1))));
+      document.getElementById('doc-title').value = data.title || '';
+      document.getElementById('editor').innerHTML = data.content || '';
+      updateCount();
+    }catch(e){}
+  } else {
+    // Load local autosave
+    var saved = localStorage.getItem('commoit_doc_' + docId);
+    if(!saved){
+      // Load most recent doc
+      var recent = localStorage.getItem('commoit_recent_doc');
+      if(recent){
+        try{
+          var d = JSON.parse(recent);
+          document.getElementById('doc-title').value = d.title||'';
+          document.getElementById('editor').innerHTML = d.content||'';
+          docId = d.id || docId;
+          updateCount();
+        }catch(e){}
+      }
+    }
+  }
+})();
+
+function cmd(command, val){
+  document.getElementById('editor').focus();
+  document.execCommand(command, false, val||null);
+  updateToolbar();
+  markDirty();
+}
+
+function applyFont(f){
+  document.getElementById('editor').focus();
+  document.execCommand('fontName', false, f);
+  markDirty();
+}
+
+function applyFontSize(size){
+  // execCommand fontSize only supports 1-7, so use style
+  document.getElementById('editor').focus();
+  document.execCommand('fontSize', false, '7');
+  var els = document.getElementById('editor').querySelectorAll('font[size="7"]');
+  els.forEach(function(el){
+    el.removeAttribute('size');
+    el.style.fontSize = size + 'pt';
+  });
+  markDirty();
+}
+
+function applyColor(c){
+  document.getElementById('text-color-bar').style.background = c;
+  cmd('foreColor', c);
+}
+
+function applyBgColor(c){
+  document.getElementById('bg-color-bar').style.background = c;
+  cmd('hiliteColor', c);
+}
+
+function applyBlock(tag){
+  document.getElementById('editor').focus();
+  document.execCommand('formatBlock', false, tag);
+  closeAllDropdowns();
+  markDirty();
+}
+
+function insertTable(){
+  var html='<table><thead><tr><th>列1</th><th>列2</th><th>列3</th></tr></thead><tbody><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr></tbody></table><p></p>';
+  cmd('insertHTML', html);
+  closeAllDropdowns();
+}
+
+function insertHR(){
+  cmd('insertHTML','<hr><p></p>');
+  closeAllDropdowns();
+}
+
+function insertImg(){
+  document.getElementById('img-file-input').click();
+  closeAllDropdowns();
+}
+
+function handleImgFile(input){
+  var file = input.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    cmd('insertHTML','<img src="'+e.target.result+'" style="max-width:100%"><p></p>');
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+
+function insertLink(){
+  var url = prompt(t('linkPrompt'), 'https://');
+  if(!url) return;
+  var text = prompt(t('linkText'), url);
+  if(!text) text = url;
+  cmd('insertHTML','<a href="'+url+'">'+text+'</a>');
+  closeAllDropdowns();
+}
+
+function selectAll(){ cmd('selectAll'); }
+
+function focusEditor(){ document.getElementById('editor').focus(); }
+
+function handleKey(e){
+  if((e.ctrlKey||e.metaKey) && e.key==='s'){e.preventDefault();saveDoc();}
+}
+
+function onEdit(){ updateCount(); markDirty(); }
+
+function updateCount(){
+  var text = document.getElementById('editor').innerText||'';
+  var words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  var chars = text.length;
+  document.getElementById('word-count').innerHTML = words + ' <span id="lbl-words">' + t('words') + '</span>';
+  document.getElementById('char-count').innerHTML = chars + ' <span id="lbl-chars">' + t('chars') + '</span>';
+}
+
+function markDirty(){
+  dirty = true;
+  document.getElementById('doc-status').textContent = t('unsaved');
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(autoSave, 2000);
+}
+
+function autoSave(){
+  var data = {
+    id: docId,
+    title: document.getElementById('doc-title').value,
+    content: document.getElementById('editor').innerHTML,
+    saved: new Date().toISOString()
+  };
+  localStorage.setItem('commoit_recent_doc', JSON.stringify(data));
+  dirty = false;
+  document.getElementById('doc-status').textContent = t('saved');
+  setTimeout(function(){
+    if(!dirty) document.getElementById('doc-status').textContent='';
+  }, 3000);
+}
+
+function saveDoc(){ autoSave(); showToast(t('saved'), 'success'); }
+
+function newDoc(){
+  if(dirty && !confirm('有未保存的更改，确定新建？')) return;
+  document.getElementById('doc-title').value='';
+  document.getElementById('editor').innerHTML='';
+  docId='doc_'+Date.now();
+  dirty=false;
+  document.getElementById('doc-status').textContent='';
+  updateCount();
+  closeAllDropdowns();
+  document.getElementById('editor').focus();
+}
+
+function downloadDoc(){
+  var title = document.getElementById('doc-title').value || t('docTitle');
+  var text = document.getElementById('editor').innerText||'';
+  var blob = new Blob([title+'\n\n'+text], {type:'text/plain;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=title+'.txt';
+  a.click();
+}
+
+function downloadHTML(){
+  var title = document.getElementById('doc-title').value || t('docTitle');
+  var content = document.getElementById('editor').innerHTML;
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+title+'</title><style>body{font-family:sans-serif;max-width:800px;margin:40px auto;padding:0 20px;line-height:1.6;}</style></head><body><h1>'+title+'</h1>'+content+'</body></html>';
+  var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=title+'.html';
+  a.click();
+  closeAllDropdowns();
+}
+
+function updateToolbar(){
+  var cmds = ['bold','italic','underline','strikeThrough'];
+  // no-op for now, could highlight active buttons
+}
+
+// ── SHARE ──
+function openModal(id){ document.getElementById(id).classList.add('active'); generateShareLink(); }
+function closeModal(id){ document.getElementById(id).classList.remove('active'); }
+document.getElementById('share-modal').addEventListener('click',function(e){if(e.target===this)closeModal('share-modal');});
+
+function generateShareLink(){
+  var data={title:document.getElementById('doc-title').value,content:document.getElementById('editor').innerHTML};
+  try{
+    var encoded=btoa(encodeURIComponent(JSON.stringify(data)));
+    var url=location.origin+'/doc.html#'+encoded;
+    document.getElementById('share-link').value=url;
+  }catch(e){
+    document.getElementById('share-link').value=location.href;
+  }
+}
+
+function copyLink(){
+  var input=document.getElementById('share-link');
+  input.select();
+  document.execCommand('copy');
+  showToast(t('copy')+'!','success');
+}
+
+// ── DROPDOWN ──
+function toggleDropdown(id){
+  var el=document.getElementById(id);
+  var wasOpen=el.classList.contains('show');
+  closeAllDropdowns();
+  if(!wasOpen) el.classList.add('show');
+}
+function closeAllDropdowns(){
+  document.querySelectorAll('.dropdown-menu').forEach(function(m){m.classList.remove('show');});
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.dropdown')) closeAllDropdowns();
+});
+
+// ── TOAST ──
+function showToast(msg,type){
+  var el=document.getElementById('toast');
+  el.textContent=msg;el.className='toast show'+(type?' '+type:'');
+  setTimeout(function(){el.className='toast';},2500);
+}
+
+// ── PREVENT LOSING WORK ──
+window.addEventListener('beforeunload',function(e){
+  if(dirty){e.preventDefault();e.returnValue='';}
+});
+</script>
+</body>
+</html>
